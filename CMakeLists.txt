@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12.0)
-project(project_title LANGUAGES CXX C)
+project(shallow_waters LANGUAGES CXX C)
 
-include(../common/cmake-common.cmake)
+include(cmake-common.cmake)
 
-add_executable(lab-01 src/lab-01.cpp src/Poisson1D.cpp)
-deal_ii_setup_target(lab-01)
+add_executable(shallow_waters src/Shallow_waters.cpp src/main.cpp)
+deal_ii_setup_target(shallow_waters)
