@@ -707,3 +707,207 @@ events:
         
       exitCode: 0
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for C in mode normal"
+    directories:
+      source: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE"
+      binary: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_C_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_59d88/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_59d88.dir/build.make CMakeFiles/cmTC_59d88.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE'
+        Building C object CMakeFiles/cmTC_59d88.dir/test_mpi.c.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/gcc   -pthread -o CMakeFiles/cmTC_59d88.dir/test_mpi.c.o -c /home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE/test_mpi.c
+        Linking C executable cmTC_59d88
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_59d88.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/gcc -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_59d88.dir/test_mpi.c.o -o cmTC_59d88  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-CWFSJE'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for CXX in mode normal"
+    directories:
+      source: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl"
+      binary: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_84021/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_84021.dir/build.make CMakeFiles/cmTC_84021.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl'
+        Building CXX object CMakeFiles/cmTC_84021.dir/test_mpi.cpp.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++   -std=gnu++17 -pthread -o CMakeFiles/cmTC_84021.dir/test_mpi.cpp.o -c /home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl/test_mpi.cpp
+        Linking CXX executable cmTC_84021
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_84021.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++ -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_84021.dir/test_mpi.cpp.o -o cmTC_84021  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-j8sEhl'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1672 (_MPI_try_staged_settings)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for CXX in mode MPICXX"
+    directories:
+      source: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG"
+      binary: "/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_MPICXX"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_32abf/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_32abf.dir/build.make CMakeFiles/cmTC_32abf.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG'
+        Building CXX object CMakeFiles/cmTC_32abf.dir/test_mpi.cpp.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++   -std=gnu++17 -pthread -o CMakeFiles/cmTC_32abf.dir/test_mpi.cpp.o -c /home/andrea/Desktop/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG/test_mpi.cpp
+        Linking CXX executable cmTC_32abf
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_32abf.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++ -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_32abf.dir/test_mpi.cpp.o -o cmTC_32abf  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-w76klG'
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for C in mode normal"
+    directories:
+      source: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV"
+      binary: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_C_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_3934f/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_3934f.dir/build.make CMakeFiles/cmTC_3934f.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV'
+        Building C object CMakeFiles/cmTC_3934f.dir/test_mpi.c.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/gcc   -pthread -o CMakeFiles/cmTC_3934f.dir/test_mpi.c.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV/test_mpi.c
+        Linking C executable cmTC_3934f
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3934f.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/gcc -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_3934f.dir/test_mpi.c.o -o cmTC_3934f  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-7KvExV'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for CXX in mode normal"
+    directories:
+      source: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX"
+      binary: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_e770c/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_e770c.dir/build.make CMakeFiles/cmTC_e770c.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX'
+        Building CXX object CMakeFiles/cmTC_e770c.dir/test_mpi.cpp.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++   -std=gnu++17 -pthread -o CMakeFiles/cmTC_e770c.dir/test_mpi.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX/test_mpi.cpp
+        Linking CXX executable cmTC_e770c
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e770c.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++ -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_e770c.dir/test_mpi.cpp.o -o cmTC_e770c  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-ldlVWX'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/u/sw/toolchains/gcc-glibc/11.2.0/base/share/cmake-3.28/Modules/FindMPI.cmake:1672 (_MPI_try_staged_settings)"
+      - "cmake-common.cmake:16 (find_package)"
+      - "CMakeLists.txt:4 (include)"
+    description: "The MPI test test_mpi for CXX in mode MPICXX"
+    directories:
+      source: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG"
+      binary: "/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_MPICXX"
+      cached: true
+      stdout: |
+        Change Dir: '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG'
+        
+        Run Build Command(s): /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E env VERBOSE=1 /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake -f Makefile cmTC_3e56c/fast
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/gmake  -f CMakeFiles/cmTC_3e56c.dir/build.make CMakeFiles/cmTC_3e56c.dir/build
+        gmake[1]: Entering directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG'
+        Building CXX object CMakeFiles/cmTC_3e56c.dir/test_mpi.cpp.o
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++   -std=gnu++17 -pthread -o CMakeFiles/cmTC_3e56c.dir/test_mpi.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG/test_mpi.cpp
+        Linking CXX executable cmTC_3e56c
+        /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3e56c.dir/link.txt --verbose=1
+        /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++ -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,-rpath -Wl,/u/sw/toolchains/gcc-glibc/11.2.0/base/lib -Wl,--enable-new-dtags -pthread CMakeFiles/cmTC_3e56c.dir/test_mpi.cpp.o -o cmTC_3e56c  /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so 
+        gmake[1]: Leaving directory '/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/CMakeScratch/TryCompile-DXTPNG'
+        
+      exitCode: 0
+...
