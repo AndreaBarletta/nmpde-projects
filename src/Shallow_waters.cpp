@@ -188,6 +188,11 @@ void Shallow_waters::assemble_stiffness_and_rhs_h(const double &time)
 
     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
+    std::vector<double> u_old(fe_values_h.n_quadrature_points);
+    std::vector<double> v_old(fe_values_h.n_quadrature_points);
+    std::vector<double> u_curr(fe_values_h.n_quadrature_points);
+    std::vector<double> v_curr(fe_values_h.n_quadrature_points);
+
     stiffness_matrix_h = 0.0;
     system_rhs_h = 0.0;
 
@@ -198,13 +203,9 @@ void Shallow_waters::assemble_stiffness_and_rhs_h(const double &time)
 
         fe_values_h.reinit(cell);
 
-        std::vector<double> u_old(fe_values_h.n_quadrature_points);
         fe_values_h.get_function_values(previous_solution_u, u_old);
-        std::vector<double> v_old(fe_values_h.n_quadrature_points);
         fe_values_h.get_function_values(previous_solution_v, v_old);
-        std::vector<double> u_curr(fe_values_h.n_quadrature_points);
         fe_values_h.get_function_values(solution_u, u_curr);
-        std::vector<double> v_curr(fe_values_h.n_quadrature_points);
         fe_values_h.get_function_values(solution_v, v_curr);
 
         cell_matrix = 0.0;
@@ -213,28 +214,11 @@ void Shallow_waters::assemble_stiffness_and_rhs_h(const double &time)
         {
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-                double k_curr = 0.0;
-                double k_old = 0.0;
-
-                for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                    k_curr += fe_values_h.shape_value(k, q) *
-                              (u_curr[q] * fe_values_h.shape_grad(i, q)[0] +
-                               v_curr[q] * fe_values_h.shape_grad(i, q)[1]);
-
-                    k_old += fe_values_h.shape_value(k, q) *
-                             (u_old[q] * fe_values_h.shape_grad(i, q)[0] +
-                              v_old[q] * fe_values_h.shape_grad(i, q)[1]);
-                }
-
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
+                    cell_matrix(i, j) += -3.0 / 2.0 * (u_curr[q] * fe_values_h.shape_grad(j, q)[0] + v_curr[q] * fe_values_h.shape_grad(j, q)[1]) * fe_values_h.shape_value(j, q) * fe_values_h.JxW(q);
 
-                    cell_matrix(i, j) += -3.0 / 2.0 * k_curr;
-
-                    cell_matrix(i, j) += 1.0 / 2.0 * k_old;
-
-                    cell_matrix(i,j) *= fe_values_h.shape_value(j, q) * fe_values_h.JxW(q);
+                    cell_matrix(i, j) += 1.0 / 2.0 * (u_old[q] * fe_values_h.shape_grad(j, q)[0] + v_old[q] * fe_values_h.shape_grad(j, q)[1]) * fe_values_h.shape_value(j, q) * fe_values_h.JxW(q);
                 }
             }
         }
@@ -271,6 +255,13 @@ void Shallow_waters::assemble_stiffness_and_rhs_u(const double &time)
 
     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
+    std::vector<Tensor<1,dim>> h_old_grad(fe_values_u.n_quadrature_points);
+    std::vector<double> u_old(fe_values_u.n_quadrature_points);
+    std::vector<double> v_old(fe_values_u.n_quadrature_points);
+    std::vector<Tensor<1,dim>> h_curr_grad(fe_values_u.n_quadrature_points);
+    std::vector<double> u_curr(fe_values_u.n_quadrature_points);
+    std::vector<double> v_curr(fe_values_u.n_quadrature_points);
+
     stiffness_matrix_u = 0.0;
     system_rhs_u = 0.0;
 
@@ -281,23 +272,11 @@ void Shallow_waters::assemble_stiffness_and_rhs_u(const double &time)
 
         fe_values_u.reinit(cell);
 
-        // h(n)
-        std::vector<double> h_old(fe_values_u.n_quadrature_points);
-        fe_values_u.get_function_values(previous_solution_h, h_old);
-        // u(n-1)
-        std::vector<double> u_old(fe_values_u.n_quadrature_points);
+        fe_values_u.get_function_gradients(previous_solution_h, h_old_grad);
         fe_values_u.get_function_values(previous_solution_u, u_old);
-        // v(n-1)
-        std::vector<double> v_old(fe_values_u.n_quadrature_points);
         fe_values_u.get_function_values(previous_solution_v, v_old);
-        // h(n+1)
-        std::vector<double> h_curr(fe_values_u.n_quadrature_points);
-        fe_values_u.get_function_values(solution_h, h_curr);
-        // u(n)
-        std::vector<double> u_curr(fe_values_u.n_quadrature_points);
+        fe_values_u.get_function_gradients(solution_h, h_curr_grad);
         fe_values_u.get_function_values(solution_u, u_curr);
-        // v(n)
-        std::vector<double> v_curr(fe_values_u.n_quadrature_points);
         fe_values_u.get_function_values(solution_v, v_curr);
 
         cell_matrix = 0.0;
@@ -307,37 +286,14 @@ void Shallow_waters::assemble_stiffness_and_rhs_u(const double &time)
         {
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
-
-                    double k_star = 0.0;
-
-                    for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                    {
-                        k_star += 3.0 / 2.0 * (u_curr[q] * fe_values_u.shape_grad(j, q)[0] + v_curr[q] * fe_values_u.shape_grad(j, q)[1]);
-
-                        k_star += -1.0 / 2.0 * (u_old[q] * fe_values_u.shape_grad(j, q)[0] + v_old[q] * fe_values_u.shape_grad(j, q)[1]);
-
-                        k_star *= fe_values_u.shape_value(k, q);
-                    }
-
-                    cell_matrix(i, j) += k_star * fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
+                    cell_matrix(i, j) += 3.0 / 2.0 * (u_curr[q] * fe_values_u.shape_grad(j, q)[0]+ v_curr[q] * fe_values_u.shape_grad(j, q)[1]) * fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
+                    cell_matrix(i, j) += -1.0 / 2.0 * (u_old[q] * fe_values_u.shape_grad(j, q)[0] + v_old[q] * fe_values_u.shape_grad(j, q)[1]) * fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
                 }
 
-                for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                    pcout << -1.0 / 2.0 * (h_curr[q] * fe_values_u.shape_grad(k, q)[0] + h_old[q] * fe_values_u.shape_grad(k, q)[0]) << " + ";
-                    cell_rhs(i) += -1.0 / 2.0 * (h_curr[q] + h_old[q]) * fe_values_u.shape_grad(k, q)[0];
-
-                    pcout << f * (3.0 / 2.0 * v_curr[q] - 1.0 / 2.0 * v_old[q]) * fe_values_u.shape_value(k, q)<< " + ";
-                    cell_rhs(i) += f * (3.0 / 2.0 * v_curr[q] - 1.0 / 2.0 * v_old[q]) * fe_values_u.shape_value(k, q);
-                    
-                }
-
-                pcout << " * " << fe_values_u.shape_value(i, q) * fe_values_u.JxW(q) << " = ";
-                cell_rhs(i) *= fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
-                pcout << cell_rhs(i) << std::endl;
+                cell_rhs(i) += -1.0/2.0*(h_curr_grad[q][0] + h_old_grad[q][0])* fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
+                cell_rhs(i) += f*(3.0/2.0*v_curr[q] - 1.0/2.0*v_old[q])* fe_values_u.shape_value(i, q) * fe_values_u.JxW(q);
             }
         }
 
@@ -355,25 +311,26 @@ void Shallow_waters::assemble_stiffness_and_rhs_u(const double &time)
 
     rhs_matrix_u.vmult_add(system_rhs_u, solution_u);
 
-    // // Boundary conditions.
-    // {
+    // Boundary conditions.
+    {
 
-    //     std::map<types::global_dof_index, double> boundary_values;
-    //     std::map<types::boundary_id, const Function<dim> *> boundary_functions;
-    //     Functions::ConstantFunction<dim> function_zero(0.0);
+        std::map<types::global_dof_index, double> boundary_values;
+        std::map<types::boundary_id, const Function<dim> *> boundary_functions;
+        Functions::ConstantFunction<dim> function_zero(0.0);
 
-    //     boundary_functions[0] = &function_zero;
-    //     boundary_functions[1] = &function_zero;
-    //     boundary_functions[2] = &function_zero;
-    //     boundary_functions[3] = &function_zero;
+        boundary_functions[0] = &function_zero;
+        boundary_functions[1] = &function_zero;
+        // Should these be there or not?
+        // boundary_functions[2] = &function_zero;
+        // boundary_functions[3] = &function_zero;
 
-    //     VectorTools::interpolate_boundary_values(dof_handler_u,
-    //                                              boundary_functions,
-    //                                              boundary_values);
+        VectorTools::interpolate_boundary_values(dof_handler_u,
+                                                 boundary_functions,
+                                                 boundary_values);
 
-    //     MatrixTools::apply_boundary_values(
-    //         boundary_values, lhs_matrix_u, solution_u, system_rhs_u, true);
-    // }
+        MatrixTools::apply_boundary_values(
+            boundary_values, lhs_matrix_u, solution_u, system_rhs_u, true);
+    }
 }
 
 void Shallow_waters::assemble_stiffness_and_rhs_v(const double &time)
