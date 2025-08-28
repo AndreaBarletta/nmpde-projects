@@ -20,6 +20,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/solver_gmres.h>
@@ -42,31 +43,32 @@ public:
     // Physical dimension (2D)
     static constexpr unsigned int dim = 2;
 
-    // Initial conditions.
-    class InitialConditions_h : public Function<dim>
+    // Exact solutions.
+    class ExactSolution_h : public Function<dim>
     {
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            return p[0] < 0.5 ? 1.0 : 0.0;
+            return 1.0+0.5*std::sin(M_PI*p[0])*std::cos(M_PI*p[1])*std::cos(M_PI*get_time());
+        }
+    };
+    
+
+    class ExactSolution_u : public Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return p[1]*std::sin(M_PI*get_time())*std::sin(M_PI*p[0])*std::cos(0.5*M_PI*p[1]);
         }
     };
 
-    class InitialConditions_u : public Function<dim>
+    class ExactSolution_v : public Function<dim>
     {
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            return 0.0;
-        }
-    };
-
-    class InitialConditions_v : public Function<dim>
-    {
-    public:
-        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
-        {
-            return 0.0;
+            return std::cos(M_PI*get_time())*std::sin(M_PI*p[0])*std::sin(M_PI*p[1]);
         }
     };
 
@@ -158,9 +160,10 @@ protected:
     // Friction coefficient
     const double cf = 1.0e-2;
 
-    InitialConditions_h initial_conditions_h;
-    InitialConditions_u initial_conditions_u;
-    InitialConditions_v initial_conditions_v;
+    // Exact solutions
+    ExactSolution_h exact_solution_h;
+    ExactSolution_u exact_solution_u;
+    ExactSolution_v exact_solution_v;
 
     // Discretization. ///////////////////////////////////////////////////////////
 
@@ -187,9 +190,10 @@ protected:
     std::unique_ptr<FiniteElement<dim>> fe_v;
 
     // Quadrature formulas.
-    std::unique_ptr<Quadrature<dim>> quadrature_h;
-    std::unique_ptr<Quadrature<dim>> quadrature_u;
-    std::unique_ptr<Quadrature<dim>> quadrature_v;
+    // std::unique_ptr<Quadrature<dim>> quadrature_h;
+    // std::unique_ptr<Quadrature<dim>> quadrature_u;
+    // std::unique_ptr<Quadrature<dim>> quadrature_v;
+    std::unique_ptr<Quadrature<dim>> quadrature;
 
     // DoF handlers.
     DoFHandler<dim> dof_handler_h;
