@@ -1962,6 +1962,7 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/conditional_ostream.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/config.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/cuda.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/cuda_size.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/data_out_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/derivative_form.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/exceptions.h \
@@ -2029,7 +2030,6 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_iterator_selector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_levels.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_objects.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_renumbering.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_tools.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/number_cache.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/block_mask.h \
@@ -2075,9 +2075,9 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/hp/q_collection.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/affine_constraints.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_indices.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_matrix_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_sparsity_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_vector_base.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/diagonal_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/dynamic_sparsity_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/exceptions.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/full_matrix.h \
@@ -2087,10 +2087,10 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/la_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_full_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_support.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/matrix_iterator.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/orthogonalization.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/petsc_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/petsc_vector_base.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/precondition.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/read_write_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/solver.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/solver_cg.h \
@@ -2100,11 +2100,9 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/sparsity_pattern_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/sparsity_tools.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/tridiagonal_matrix.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_block_sparse_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_epetra_communication_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_epetra_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_index_access.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_parallel_block_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_precondition.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_sparse_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_sparsity_pattern.h \
@@ -4903,6 +4901,7 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/conditional_ostream.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/config.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/cuda.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/cuda_size.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/data_out_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/derivative_form.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/exceptions.h \
@@ -4970,7 +4969,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_iterator_selector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_levels.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_objects.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_renumbering.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_tools.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/number_cache.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/block_mask.h \
@@ -5016,9 +5014,9 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/hp/q_collection.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/affine_constraints.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_indices.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_matrix_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_sparsity_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_vector_base.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/diagonal_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/dynamic_sparsity_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/exceptions.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/full_matrix.h \
@@ -5028,10 +5026,10 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/la_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_full_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_support.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/matrix_iterator.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/orthogonalization.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/petsc_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/petsc_vector_base.h \
+  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/precondition.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/read_write_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/solver.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/solver_cg.h \
@@ -5041,11 +5039,9 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/sparsity_pattern_base.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/sparsity_tools.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/tridiagonal_matrix.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_block_sparse_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_epetra_communication_pattern.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_epetra_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_index_access.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_parallel_block_vector.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_precondition.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_sparse_matrix.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_sparsity_pattern.h \
@@ -7170,6 +7166,8 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/formulas/result_inverse.hpp:
 
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/diagonal_matrix.h:
+
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/util/type_traits_std.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/prefix/lib/gcc/x86_64-mk-linux/11.2.0/include/vpclmulqdqintrin.h:
@@ -7409,10 +7407,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/strategies/detail.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/geometries/concepts/multi_linestring_concept.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_Timer.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/iostreams/filter/gzip.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/desul/atomics/Compare_Exchange.hpp:
 
@@ -7927,8 +7921,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/impl/Kokkos_Volatile_Load.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/function_types/detail/pp_arity_loop.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/matrix_iterator.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/algorithm/string/std/slist_traits.hpp:
 
@@ -8730,8 +8722,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/formulas/andoyer_inverse.hpp:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/detail/sp_counted_impl.hpp:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/algorithms/detail/distance/default_strategies.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/parameter/aux_/default.hpp:
@@ -8827,6 +8817,10 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/random/detail/enable_warnings.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/range/begin.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/detail/sp_counted_impl.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/precondition.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/algorithms/detail/envelope/segment.hpp:
 
@@ -9510,8 +9504,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/serialization/is_bitwise_serializable.hpp:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/block_matrix_base.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/strategies/spherical/intersection.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/signals2/mutex.hpp:
@@ -9599,10 +9591,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/type_traits/is_lvalue_reference.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/mpl/aux_/static_cast.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_Tuners.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/preprocessor/slot/detail/def.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/petsc/3.15.1/include/petscfix.h:
 
@@ -9987,8 +9975,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/prefix/include/c++/11.2.0/climits:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/type_traits/is_empty.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/multi_index/detail/base_type.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/make_shared.hpp:
 
@@ -10676,6 +10662,10 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/qvm/gen/vec_mat_operations2.hpp:
 
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/multi_index/detail/base_type.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/base/cuda_size.h:
+
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/grid/tria_faces.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/qvm/gen/vec_mat_operations3.hpp:
@@ -11324,10 +11314,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_levels.h:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/geometries/point.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_vector.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_tools.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/views/detail/range_type.hpp:
@@ -11418,8 +11404,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/identity_matrix.h:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_renumbering.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_full_matrix.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/lapack_support.h:
@@ -11434,8 +11418,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/sparsity_tools.h:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_block_sparse_matrix.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_index_access.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/prefix/include/c++/11.2.0/bits/allocated_ptr.h:
@@ -11444,9 +11426,11 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/petsc/3.15.1/include/petscdmcomposite.h:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_parallel_block_vector.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_sparse_matrix.h:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/geometries/point.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/trilinos_vector.h:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/lac/vector_operation.h:
 
@@ -11765,3 +11749,11 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_ScratchSpace.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_TaskScheduler_fwd.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/iostreams/filter/gzip.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_Timer.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/preprocessor/slot/detail/def.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_Tuners.hpp:
