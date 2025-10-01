@@ -47,6 +47,7 @@ public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             return 1.0 + 0.5 * std::sin(M_PI * p[0]) * std::cos(M_PI * p[1]) * std::cos(M_PI * get_time());
+            // return p[1] * std::sin(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::cos(0.5 * M_PI * p[1]);
         }
     };
 
@@ -199,23 +200,23 @@ protected:
 
     // Mass matrix M / deltat.
     TrilinosWrappers::SparseMatrix mass_matrix_h;
-    TrilinosWrappers::SparseMatrix mass_matrix_u;
+    // TrilinosWrappers::SparseMatrix mass_matrix_u;
 
     // Stiffness matrix A.
     TrilinosWrappers::SparseMatrix stiffness_matrix_h;
-    TrilinosWrappers::SparseMatrix stiffness_matrix_u;
+    // TrilinosWrappers::SparseMatrix stiffness_matrix_u;
 
     // Matrix on the left-hand side (M / deltat + theta A).
     TrilinosWrappers::SparseMatrix lhs_matrix_h;
-    TrilinosWrappers::SparseMatrix lhs_matrix_u;
+    // TrilinosWrappers::SparseMatrix lhs_matrix_u;
 
     // Matrix on the right-hand side (M / deltat - (1 - theta) A).
     TrilinosWrappers::SparseMatrix rhs_matrix_h;
-    TrilinosWrappers::SparseMatrix rhs_matrix_u;
+    // TrilinosWrappers::SparseMatrix rhs_matrix_u;
 
     // Right-hand side vector in the linear system.
     TrilinosWrappers::MPI::Vector system_rhs_h;
-    TrilinosWrappers::MPI::Vector system_rhs_u;
+    // TrilinosWrappers::MPI::Vector system_rhs_u;
 
     // System solution (without ghost elements).
     TrilinosWrappers::MPI::Vector solution_owned_h;
@@ -226,8 +227,8 @@ protected:
     TrilinosWrappers::MPI::Vector solution_u;
 
     // Previous time step solutions (used to compute * variables).
-    TrilinosWrappers::MPI::Vector previous_solution_h;
-    TrilinosWrappers::MPI::Vector previous_solution_u;
+    // TrilinosWrappers::MPI::Vector previous_solution_h;
+    // TrilinosWrappers::MPI::Vector previous_solution_u;
 };
 
 #endif
