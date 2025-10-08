@@ -176,6 +176,9 @@ protected:
     // NOTE: this should not be changed, unless you know what you are doing
     static constexpr double theta = 0.5;
 
+    // Stabilization constant
+    static constexpr double eps = 0.5;
+
     // Mesh.
     parallel::fullydistributed::Triangulation<dim> mesh;
 

@@ -253,28 +253,37 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
         {
             Vector<double> v(dim);
 
-            exact_solution_u.set_time(time - deltat);
+            exact_solution_u.set_time(time);
             exact_solution_u.vector_value(fe_values_u.quadrature_point(q), v);
-            Tensor<1, dim> u_n;
+            Tensor<1, dim> u_exact;
             for (unsigned int d = 0; d < dim; ++d)
-                u_n[d] = v[d];
+                u_exact[d] = v[d];
 
-            exact_solution_u.set_time(time - 2 * deltat);
-            exact_solution_u.vector_value(fe_values_u.quadrature_point(q), v);
-            Tensor<1, dim> u_n_1;
-            for (unsigned int d = 0; d < dim; ++d)
-                u_n_1[d] = v[d];
+            // exact_solution_u.set_time(time - 2 * deltat);
+            // exact_solution_u.vector_value(fe_values_u.quadrature_point(q), v);
+            // Tensor<1, dim> u_n_1;
+            // for (unsigned int d = 0; d < dim; ++d)
+            //     u_n_1[d] = v[d];
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
                     // Stiffness term
-                    cell_matrix(i, j) += -scalar_product(
-                                             (3.0 / 2.0 * u_n - 1.0 / 2.0 * u_n_1),
-                                             fe_values_h.shape_grad(i, q)) *
-                                         fe_values_h.shape_value(j, q) *
-                                         fe_values_h.JxW(q);
+                    // cell_matrix(i, j) += -scalar_product(
+                    //                          (3.0 / 2.0 * u_n - 1.0 / 2.0 * u_n_1),
+                    //                          fe_values_h.shape_grad(i, q)) *
+                    //                      fe_values_h.shape_value(j, q) *
+                    //                      fe_values_h.JxW(q);
+
+                    // Stiffness term
+                    cell_matrix(i,j) += -scalar_product(u_exact,fe_values_h.shape_grad(i,q)) * 
+                                        fe_values_h.shape_value(j,q) *
+                                        fe_values_h.JxW(q);
+                    
+                    // Stabilization term (for now consider it static)
+                    cell_matrix(i,j) += eps * scalar_product(fe_values_h.shape_grad(i,q),fe_values_h.shape_grad(j,q)) * 
+                                        fe_values_h.JxW(q);
                 }
 
                 // cell_rhs(i) += u_x * fe_values_h.shape_value(i,q) * fe_values_h.JxW(q);
