@@ -71,6 +71,15 @@ public:
             else
                 return std::cos(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::sin(M_PI * p[1]);
         }
+
+        double
+        divergence(const Point<dim> &p) const
+        {
+            return M_PI*(
+                p[1]*std::sin(M_PI*get_time())*std::cos(M_PI*p[0])*std::cos(0.5*M_PI*p[1])+
+                std::cos(M_PI*get_time())*std::sin(M_PI*p[0])*std::cos(M_PI*p[1])
+            );
+        }
     };
 
     // Constructor. We provide the final time and time step Delta t
@@ -106,21 +115,18 @@ public:
     compute_error(const VectorTools::NormType &norm_type);
 
 protected:
-    // Assemble the mass matrices.
-    void assemble_mass_matrix_h();
-    void assemble_mass_matrix_u();
-
-    // Assemble the stiffness matrices and right-hand sides
-    // Note that both are different each timestep (unlike usually)
+    // Assemble the mass matrix, stiffness matrix and rhs for the height equation.
+    // Note that the SUPG stabilizer makes it necessary to recompute the mass matrix at each iteration
     void assemble_lhs_rhs_h(const double &time);
 
-    void assemble_lhs_rhs_u(const double &time);
+    // void assemble_lhs_rhs_u(const double &time);
 
     // Solve the problem for one time step.
     void solve_time_step(/*TrilinosWrappers::SparseMatrix &,
                          TrilinosWrappers::MPI::Vector &,
                          TrilinosWrappers::MPI::Vector &,
-                         TrilinosWrappers::MPI::Vector &*/);
+                         TrilinosWrappers::MPI::Vector &*/
+    );
 
     // Output.
     void output(const unsigned int &time_step) const;
@@ -175,9 +181,6 @@ protected:
     // Theta parameter of the theta method.
     // NOTE: this should not be changed, unless you know what you are doing
     static constexpr double theta = 0.5;
-
-    // Stabilization constant
-    static constexpr double eps = 0.5;
 
     // Mesh.
     parallel::fullydistributed::Triangulation<dim> mesh;

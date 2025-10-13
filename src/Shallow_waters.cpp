@@ -110,100 +110,6 @@ void Shallow_waters::setup()
     }
 }
 
-void Shallow_waters::assemble_mass_matrix_h()
-{
-    pcout << "===============================================" << std::endl;
-    pcout << "Assembling the mass matrix for height" << std::endl;
-
-    const unsigned int dofs_per_cell = fe_h->dofs_per_cell;
-    const unsigned int n_q = quadrature->size();
-
-    FEValues<dim> fe_values(*fe_h, *quadrature, update_values | update_gradients | update_quadrature_points | update_JxW_values);
-
-    FullMatrix<double> cell_mass_matrix(dofs_per_cell, dofs_per_cell);
-
-    std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-
-    mass_matrix_h = 0.0;
-
-    for (const auto &cell : dof_handler_h.active_cell_iterators())
-    {
-        if (!cell->is_locally_owned())
-            continue;
-
-        fe_values.reinit(cell);
-
-        cell_mass_matrix = 0.0;
-
-        for (unsigned int q = 0; q < n_q; ++q)
-        {
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-            {
-                for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                {
-                    cell_mass_matrix(i, j) += fe_values.shape_value(i, q) *
-                                              fe_values.shape_value(j, q) /
-                                              deltat * fe_values.JxW(q);
-                }
-            }
-        }
-
-        cell->get_dof_indices(dof_indices);
-
-        mass_matrix_h.add(dof_indices, cell_mass_matrix);
-    }
-
-    mass_matrix_h.compress(VectorOperation::add);
-}
-
-// void Shallow_waters::assemble_mass_matrix_u()
-// {
-//     pcout << "===============================================" << std::endl;
-//     pcout << "Assembling the mass matrix for velocity" << std::endl;
-
-//     const unsigned int dofs_per_cell = fe_u->dofs_per_cell;
-//     const unsigned int n_q = quadrature->size();
-
-//     FEValues<dim> fe_values(*fe_u, *quadrature, update_values | update_gradients | update_quadrature_points | update_JxW_values);
-
-//     FullMatrix<double> cell_mass_matrix(dofs_per_cell, dofs_per_cell);
-
-//     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-
-//     const FEValuesExtractors::Vector velocities(0);
-
-//     mass_matrix_u = 0.0;
-
-//     for (const auto &cell : dof_handler_u.active_cell_iterators())
-//     {
-//         if (!cell->is_locally_owned())
-//             continue;
-
-//         fe_values.reinit(cell);
-
-//         cell_mass_matrix = 0.0;
-
-//         for (unsigned int q = 0; q < n_q; ++q)
-//         {
-//             for (unsigned int i = 0; i < dofs_per_cell; ++i)
-//             {
-//                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
-//                 {
-//                     cell_mass_matrix(i, j) += scalar_product(
-//                                                   fe_values[velocities].value(i, q),
-//                                                   fe_values[velocities].value(j, q)) /
-//                                               deltat * fe_values.JxW(q);
-//                 }
-//             }
-//         }
-
-//         cell->get_dof_indices(dof_indices);
-//         mass_matrix_u.add(dof_indices, cell_mass_matrix);
-//     }
-
-//     mass_matrix_u.compress(VectorOperation::add);
-// }
-
 void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 {
     pcout << "===============================================" << std::endl;
@@ -222,11 +128,13 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
         *quadrature,
         update_values | update_gradients | update_quadrature_points | update_JxW_values);
 
-    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+    FullMatrix<double> cell_mass_matrix(dofs_per_cell, dofs_per_cell);
+    FullMatrix<double> cell_stiffness_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double> cell_rhs(dofs_per_cell);
 
     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
+    mass_matrix_h = 0.0;
     stiffness_matrix_h = 0.0;
     system_rhs_h = 0.0;
 
@@ -237,68 +145,65 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
     for (; cell_h != endc; ++cell_h, ++cell_u)
     {
-        if(!cell_h->is_locally_owned() || !cell_u->is_locally_owned())
+        if (!cell_h->is_locally_owned() || !cell_u->is_locally_owned())
             continue;
 
         fe_values_h.reinit(cell_h);
         fe_values_u.reinit(cell_u);
 
-        // fe_values_u[velocities].get_function_values(previous_solution_u, u_n_1);
-        // fe_values_u[velocities].get_function_values(solution_u, u_n);
-
-        cell_matrix = 0.0;
-        cell_rhs = 0.0;
+        cell_mass_matrix = 0.0;
+        cell_stiffness_matrix = 0.0;
 
         for (unsigned int q = 0; q < n_q; ++q)
         {
-            Vector<double> v(dim);
-
+            // For now we use the exact solution for U at the current time, that is n+1
+            Vector<double> vec(dim);
             exact_solution_u.set_time(time);
-            exact_solution_u.vector_value(fe_values_u.quadrature_point(q), v);
+            exact_solution_u.vector_value(fe_values_u.quadrature_point(q), vec);
             Tensor<1, dim> u_exact;
             for (unsigned int d = 0; d < dim; ++d)
-                u_exact[d] = v[d];
+                u_exact[d] = vec[d];
 
-            // exact_solution_u.set_time(time - 2 * deltat);
-            // exact_solution_u.vector_value(fe_values_u.quadrature_point(q), v);
-            // Tensor<1, dim> u_n_1;
-            // for (unsigned int d = 0; d < dim; ++d)
-            //     u_n_1[d] = v[d];
+            const double u_exact_div = exact_solution_u.divergence(fe_values_u.quadrature_point(q));
+
+            // Compute tau parameter for SUGP stabilizer
+            // const double k = u_exact.norm();
+            // const double smallh = 1.0 / 10.0;
+            // const double SUPGtheta = smallh * k * 0.5;
+            // const double SUPGxi = 1.0 / std::tanh(SUPGtheta) - 1.0 / SUPGtheta;
+            // const double SUPGtau = smallh / (2.0 * k) * SUPGxi;
+
+            // Static SUPG stabilizer parameter
+            const double smallh = 1.0 / 10.0;
+            const double SUPGtau = smallh;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
-                    // Stiffness term
-                    // cell_matrix(i, j) += -scalar_product(
-                    //                          (3.0 / 2.0 * u_n - 1.0 / 2.0 * u_n_1),
-                    //                          fe_values_h.shape_grad(i, q)) *
-                    //                      fe_values_h.shape_value(j, q) *
-                    //                      fe_values_h.JxW(q);
+                    // Mass term
+                    cell_mass_matrix(i, j) += fe_values_h.shape_value(i, q) * fe_values_h.shape_value(j, q) / deltat * fe_values_h.JxW(q);
 
                     // Stiffness term
-                    cell_matrix(i,j) += -scalar_product(u_exact,fe_values_h.shape_grad(i,q)) * 
-                                        fe_values_h.shape_value(j,q) *
-                                        fe_values_h.JxW(q);
-                    
-                    // Stabilization term (for now consider it static)
-                    cell_matrix(i,j) += eps * scalar_product(fe_values_h.shape_grad(i,q),fe_values_h.shape_grad(j,q)) * 
-                                        fe_values_h.JxW(q);
+                    cell_stiffness_matrix(i, j) += -scalar_product(fe_values_h.shape_value(j, q) * u_exact, fe_values_h.shape_grad(i, q)) * fe_values_h.JxW(q);
+
+                    // SUPG stabilizer term for mass matrix
+                    cell_mass_matrix(i, j) += fe_values_h.shape_value(j, q) * SUPGtau * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) / deltat * fe_values_h.JxW(q);
+
+                    // SUPG stabilizer term for stiffness matrix
+                    cell_stiffness_matrix(i, j) += SUPGtau * (scalar_product(fe_values_h.shape_grad(j, q), u_exact) + fe_values_h.shape_value(j, q) * u_exact_div) * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) * fe_values_h.JxW(q);
                 }
-
-                // cell_rhs(i) += u_x * fe_values_h.shape_value(i,q) * fe_values_h.JxW(q);
-                // cell_matrix(i,i) += fe_values_h.shape_value(i,q) * fe_values_h.JxW(q);
             }
         }
 
         cell_h->get_dof_indices(dof_indices);
 
-        stiffness_matrix_h.add(dof_indices, cell_matrix);
-        system_rhs_h.add(dof_indices, cell_rhs);
+        mass_matrix_h.add(dof_indices, cell_mass_matrix);
+        stiffness_matrix_h.add(dof_indices, cell_stiffness_matrix);
     }
 
+    mass_matrix_h.compress(VectorOperation::add);
     stiffness_matrix_h.compress(VectorOperation::add);
-    system_rhs_h.compress(VectorOperation::add);
 
     lhs_matrix_h.copy_from(mass_matrix_h);
     lhs_matrix_h.add(theta, stiffness_matrix_h);
@@ -327,8 +232,6 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
     }
 }
 
-void Shallow_waters::assemble_lhs_rhs_u(const double &time) {}
-
 void Shallow_waters::solve_time_step(/*TrilinosWrappers::SparseMatrix &lhs_matrix,
                                      TrilinosWrappers::MPI::Vector &system_rhs,
                                      TrilinosWrappers::MPI::Vector &solution_owned,
@@ -345,7 +248,7 @@ void Shallow_waters::solve_time_step(/*TrilinosWrappers::SparseMatrix &lhs_matri
     preconditioner.initialize(lhs_matrix_h);
 
     pcout << "Solving the linear system" << std::endl;
-    solver.solve(lhs_matrix_h, solution_owned_h, system_rhs_h,PreconditionIdentity());
+    solver.solve(lhs_matrix_h, solution_owned_h, system_rhs_h, PreconditionIdentity());
     pcout << "  " << solver_control.last_step() << " GMRES iterations"
           << std::endl;
 
@@ -377,9 +280,6 @@ void Shallow_waters::output(const unsigned int &time_step) const
 
 void Shallow_waters::solve()
 {
-    assemble_mass_matrix_h();
-    // assemble_mass_matrix_u();
-
     pcout << "===============================================" << std::endl;
 
     time = 0.0;
