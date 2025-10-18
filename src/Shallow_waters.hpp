@@ -13,7 +13,7 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/fe_values_extractors.h>
-#include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/mapping_q1.h>
 
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
@@ -27,6 +27,8 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <deal.II/base/mpi_remote_point_evaluation.h>
 
 #include <fstream>
 #include <iostream>
@@ -47,7 +49,6 @@ public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             return 1.0 + 0.5 * std::sin(M_PI * p[0]) * std::cos(M_PI * p[1]) * std::cos(M_PI * get_time());
-            // return p[1] * std::sin(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::cos(0.5 * M_PI * p[1]);
         }
     };
 
@@ -117,7 +118,9 @@ public:
 protected:
     // Assemble the mass matrix, stiffness matrix and rhs for the height equation.
     // Note that the SUPG stabilizer makes it necessary to recompute the mass matrix at each iteration
-    void assemble_lhs_rhs_h(const double &time);
+    void assemble_mass_matrix_h();
+
+    void assemble_rhs_h(const double &time);
 
     // void assemble_lhs_rhs_u(const double &time);
 
@@ -179,8 +182,7 @@ protected:
     const double deltat;
 
     // Theta parameter of the theta method.
-    // NOTE: this should not be changed, unless you know what you are doing
-    static constexpr double theta = 0.5;
+    static constexpr double theta = 1.0;
 
     // Mesh.
     parallel::fullydistributed::Triangulation<dim> mesh;

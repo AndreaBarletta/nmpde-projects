@@ -110,11 +110,8 @@ void Shallow_waters::setup()
     }
 }
 
-void Shallow_waters::assemble_lhs_rhs_h(const double &time)
+void Shallow_waters::assemble_mass_matrix_h()
 {
-    pcout << "===============================================" << std::endl;
-    pcout << "  Assembling the lhs and rhs for the height system" << std::endl;
-
     const unsigned int dofs_per_cell = fe_h->dofs_per_cell;
     const unsigned int n_q = quadrature->size();
 
@@ -123,19 +120,54 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
         *quadrature,
         update_values | update_gradients | update_quadrature_points | update_JxW_values);
 
-    FEValues<dim> fe_values_u(
-        *fe_u,
-        *quadrature,
-        update_values | update_gradients | update_quadrature_points | update_JxW_values);
-
     FullMatrix<double> cell_mass_matrix(dofs_per_cell, dofs_per_cell);
-    FullMatrix<double> cell_stiffness_matrix(dofs_per_cell, dofs_per_cell);
+    std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+
+    mass_matrix_h = 0.0;
+    for (const auto &cell : dof_handler_h.active_cell_iterators())
+    {
+        if (!cell->is_locally_owned())
+            continue;
+
+        fe_values_h.reinit(cell);
+        cell_mass_matrix = 0.0;
+
+        for (unsigned int q = 0; q < n_q; ++q)
+        {
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+                for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                {
+                    // Mass term
+                    cell_mass_matrix(i, j) += fe_values_h.shape_value(i, q) * fe_values_h.shape_value(j, q) * fe_values_h.JxW(q);
+                }
+            }
+        }
+
+        cell->get_dof_indices(dof_indices);
+        mass_matrix_h.add(dof_indices, cell_mass_matrix);
+    }
+
+    mass_matrix_h.compress(VectorOperation::add);
+}
+
+void Shallow_waters::assemble_rhs_h(const double &time)
+{
+    const unsigned int dofs_per_cell = fe_h->dofs_per_cell;
+    const unsigned int n_q = quadrature->size();
+
+    FEValues<dim> fe_values_h(*fe_h,
+                              *quadrature,
+                              update_values | update_quadrature_points | update_JxW_values);
+
+    FEValues<dim> fe_values_u(*fe_u,
+                              *quadrature,
+                              update_values | update_quadrature_points | update_JxW_values);
+
     Vector<double> cell_rhs(dofs_per_cell);
 
     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
-    mass_matrix_h = 0.0;
-    stiffness_matrix_h = 0.0;
     system_rhs_h = 0.0;
 
     auto cell_h = dof_handler_h.begin_active();
@@ -145,91 +177,40 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
     for (; cell_h != endc; ++cell_h, ++cell_u)
     {
-        if (!cell_h->is_locally_owned() || !cell_u->is_locally_owned())
+        if (!cell_h->is_locally_owned())
             continue;
 
         fe_values_h.reinit(cell_h);
         fe_values_u.reinit(cell_u);
 
-        cell_mass_matrix = 0.0;
-        cell_stiffness_matrix = 0.0;
+        cell_rhs = 0.0;
 
         for (unsigned int q = 0; q < n_q; ++q)
         {
-            // For now we use the exact solution for U at the current time, that is n+1
-            Vector<double> vec(dim);
-            exact_solution_u.set_time(time);
-            exact_solution_u.vector_value(fe_values_u.quadrature_point(q), vec);
-            Tensor<1, dim> u_exact;
+            // Compute departure point
+            exact_solution_u.set_time(time-deltat);
+            Vector<double> u_exact(dim);
+            exact_solution_u.vector_value(fe_values_u.quadrature_point(q), u_exact);
+
+            Point<dim> p_departure;
+            Point<dim> p_arrival = fe_values_h.quadrature_point(q);
             for (unsigned int d = 0; d < dim; ++d)
-                u_exact[d] = vec[d];
+                p_departure[d] = p_arrival[d] + deltat * u_exact[d];
 
-            const double u_exact_div = exact_solution_u.divergence(fe_values_u.quadrature_point(q));
-
-            // Compute tau parameter for SUGP stabilizer
-            // const double k = u_exact.norm();
-            // const double smallh = 1.0 / 10.0;
-            // const double SUPGtheta = smallh * k * 0.5;
-            // const double SUPGxi = 1.0 / std::tanh(SUPGtheta) - 1.0 / SUPGtheta;
-            // const double SUPGtau = smallh / (2.0 * k) * SUPGxi;
-
-            // Static SUPG stabilizer parameter
-            const double smallh = 1.0 / 10.0;
-            const double SUPGtau = smallh;
+            exact_solution_h.set_time(time-deltat);
+            const double h_loc = exact_solution_h.value(p_departure);
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-                for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                {
-                    // Mass term
-                    cell_mass_matrix(i, j) += fe_values_h.shape_value(i, q) * fe_values_h.shape_value(j, q) / deltat * fe_values_h.JxW(q);
-
-                    // Stiffness term
-                    cell_stiffness_matrix(i, j) += -scalar_product(fe_values_h.shape_value(j, q) * u_exact, fe_values_h.shape_grad(i, q)) * fe_values_h.JxW(q);
-
-                    // SUPG stabilizer term for mass matrix
-                    cell_mass_matrix(i, j) += fe_values_h.shape_value(j, q) * SUPGtau * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) / deltat * fe_values_h.JxW(q);
-
-                    // SUPG stabilizer term for stiffness matrix
-                    cell_stiffness_matrix(i, j) += SUPGtau * (scalar_product(fe_values_h.shape_grad(j, q), u_exact) + fe_values_h.shape_value(j, q) * u_exact_div) * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) * fe_values_h.JxW(q);
-                }
+                cell_rhs(i) += h_loc * fe_values_h.shape_value(i, q) * fe_values_h.JxW(q);
             }
         }
 
         cell_h->get_dof_indices(dof_indices);
-
-        mass_matrix_h.add(dof_indices, cell_mass_matrix);
-        stiffness_matrix_h.add(dof_indices, cell_stiffness_matrix);
+        system_rhs_h.add(dof_indices, cell_rhs);
     }
 
-    mass_matrix_h.compress(VectorOperation::add);
-    stiffness_matrix_h.compress(VectorOperation::add);
-
-    lhs_matrix_h.copy_from(mass_matrix_h);
-    lhs_matrix_h.add(theta, stiffness_matrix_h);
-
-    rhs_matrix_h.copy_from(mass_matrix_h);
-    rhs_matrix_h.add(-(1.0 - theta), stiffness_matrix_h);
-
-    rhs_matrix_h.vmult_add(system_rhs_h, solution_owned_h);
-
-    // Boundary conditions.
-    {
-        std::map<types::global_dof_index, double> boundary_values;
-
-        std::map<types::boundary_id, const Function<dim> *> boundary_functions;
-
-        exact_solution_h.set_time(time);
-        for (unsigned int i = 0; i < 4; ++i)
-            boundary_functions[i] = &exact_solution_h;
-
-        VectorTools::interpolate_boundary_values(dof_handler_h,
-                                                 boundary_functions,
-                                                 boundary_values);
-
-        MatrixTools::apply_boundary_values(
-            boundary_values, lhs_matrix_h, solution_owned_h, system_rhs_h, false);
-    }
+    system_rhs_h.compress(VectorOperation::add);
 }
 
 void Shallow_waters::solve_time_step(/*TrilinosWrappers::SparseMatrix &lhs_matrix,
@@ -242,15 +223,11 @@ void Shallow_waters::solve_time_step(/*TrilinosWrappers::SparseMatrix &lhs_matri
 
     SolverControl solver_control(2000, 1e-6 * system_rhs_h.l2_norm());
 
-    SolverGMRES<TrilinosWrappers::MPI::Vector> solver(solver_control);
-
-    TrilinosWrappers::PreconditionAMG preconditioner;
-    preconditioner.initialize(lhs_matrix_h);
+    SolverCG<TrilinosWrappers::MPI::Vector> solver(solver_control);
 
     pcout << "Solving the linear system" << std::endl;
-    solver.solve(lhs_matrix_h, solution_owned_h, system_rhs_h, PreconditionIdentity());
-    pcout << "  " << solver_control.last_step() << " GMRES iterations"
-          << std::endl;
+    solver.solve(mass_matrix_h, solution_owned_h, system_rhs_h, PreconditionIdentity());
+    pcout << "  " << solver_control.last_step() << " CG iterations" << std::endl;
 
     solution_h = solution_owned_h;
 }
@@ -281,6 +258,10 @@ void Shallow_waters::output(const unsigned int &time_step) const
 void Shallow_waters::solve()
 {
     pcout << "===============================================" << std::endl;
+    pcout << "Assembling the mass matrix for the height equation" << std::endl;
+    assemble_mass_matrix_h();
+
+    pcout << "===============================================" << std::endl;
 
     time = 0.0;
 
@@ -302,62 +283,49 @@ void Shallow_waters::solve()
         // previous_solution_h = solution_h;
         // previous_solution_u = solution_u;
 
-        time += deltat;
+        // time += deltat;
 
-        exact_solution_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-        solution_h = solution_owned_h;
+        // exact_solution_h.set_time(time);
+        // VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+        // solution_h = solution_owned_h;
 
-        exact_solution_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
-        solution_u = solution_owned_u;
+        // exact_solution_u.set_time(time);
+        // VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+        // solution_u = solution_owned_u;
 
-        output(1);
+        // output(1);
     }
 
-    unsigned int time_step = 1;
+    unsigned int time_step = 0;
 
     while (time < T - 0.5 * deltat)
     {
         time += deltat;
-        ++time_step;
+        time_step++;
 
         pcout << "===============================================" << std::endl;
         pcout << "n = " << std::setw(3) << time_step << ", t = " << std::setw(5)
               << time << std::endl;
         pcout << "-----------------------------------------------" << std::endl;
 
-        // previous_solution_h = solution_h;
-        // exact_solution_h.set_time(time);
-        // VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-        // solution_h = solution_owned_h;
-
         // Solve for h.
-        assemble_lhs_rhs_h(time);
-        // previous_solution_h = solution_h;
-        solve_time_step(/*lhs_matrix_h, system_rhs_h, solution_owned_h, solution_h*/);
-        // Now solution_h contains h at timestep n+1, previous_solution_h contains h at timestep n
-        // solution_owned_h.print(std::cout);
+        assemble_rhs_h(time);
+        solve_time_step(/*lhs_matrix_h,
+                        system_rhs_h,
+                        solution_owned_h,
+                        solution_h*/
+        );
 
-        // previous_solution_u = solution_u;
+        // For now, use the exact solution at each time step
         exact_solution_u.set_time(time);
         VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
         solution_u = solution_owned_u;
-        // solution_owned_u.print(std::cout);
-
-        // // Solve for u.
-        // assemble_lhs_rhs_u(time);
-        // previous_solution_u = solution_u;
-        // solve_time_step(lhs_matrix_u, system_rhs_u, solution_owned_u, solution_u);
-        // // Now solution_u contains u at timestep n+1, previous_solution_u contains u at timestep n
-        // // The next iteration (n=n+1) will therefore have solution_u at timestep n and previous_solution_u at timestep n-1
 
         output(time_step);
     }
 }
 
-double
-Shallow_waters::compute_error(const VectorTools::NormType &norm_type)
+double Shallow_waters::compute_error(const VectorTools::NormType &norm_type)
 {
     return 1.0;
 }

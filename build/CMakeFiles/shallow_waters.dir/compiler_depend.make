@@ -2046,7 +2046,6 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magi
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/fe_values_extractors.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_cartesian.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_fe.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q1.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_related_data.h \
@@ -4985,7 +4984,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/fe_values_extractors.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_cartesian.h \
-  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_fe.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q1.h \
   /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_related_data.h \
@@ -6619,8 +6617,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_hwloc.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_Vectorization.hpp:
-
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_UniqueToken.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/mpl/aux_/preprocessed/gcc/reverse_iter_fold_impl.hpp:
 
@@ -9376,8 +9372,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/dofs/dof_faces.h:
 
-/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_fe.h:
-
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/geometry/iterators/concatenate_iterator.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/range/reference.hpp:
@@ -10945,6 +10939,8 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMP
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/detail/sp_thread_pause.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/detail/sp_typeinfo_.hpp:
+
+/u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/include/Kokkos_UniqueToken.hpp:
 
 /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/include/boost/smart_ptr/detail/spinlock.hpp:
 

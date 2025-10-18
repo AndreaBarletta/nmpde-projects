@@ -2047,7 +2047,6 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/fe_values_extractors.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_cartesian.h
- /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_fe.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q1.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_related_data.h
@@ -4987,7 +4986,6 @@ CMakeFiles/shallow_waters.dir/src/main.cpp.o
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/fe_values_extractors.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_cartesian.h
- /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_fe.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_q1.h
  /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/include/deal.II/fe/mapping_related_data.h
