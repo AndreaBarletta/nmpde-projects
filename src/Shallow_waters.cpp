@@ -121,7 +121,7 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
     FEValues<dim> fe_values_h(
         *fe_h,
         *quadrature,
-        update_values | update_gradients | update_quadrature_points | update_JxW_values);
+        update_values | update_gradients | update_quadrature_points | update_JxW_values | update_jacobians);
 
     FEValues<dim> fe_values_u(
         *fe_u,
@@ -167,15 +167,21 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
             const double u_exact_div = exact_solution_u.divergence(fe_values_u.quadrature_point(q));
 
             // Compute tau parameter for SUGP stabilizer
-            // const double k = u_exact.norm();
-            // const double smallh = 1.0 / 10.0;
-            // const double SUPGtheta = smallh * k * 0.5;
-            // const double SUPGxi = 1.0 / std::tanh(SUPGtheta) - 1.0 / SUPGtheta;
-            // const double SUPGtau = smallh / (2.0 * k) * SUPGxi;
+            // Get the Jacobian at quadrature point q
+            const Tensor<2, dim> &J = fe_values_h.jacobian(q);
+            Tensor<2, dim> G;
+            for (unsigned int i = 0; i < dim; ++i)
+            {
+                for (unsigned int j = 0; j < dim; ++j)
+                {
+                    G[i][j] = 0;
+                    for (unsigned int k = 0; k < dim; ++k)
+                        G[i][j] += J[k][i] * J[k][j];
+                }
+            }
 
-            // Static SUPG stabilizer parameter
-            const double smallh = 1.0 / 10.0;
-            const double SUPGtau = smallh;
+            double SUPGtau = 1.0/(std::sqrt((4.0/(deltat*deltat))+u_exact*G*u_exact));
+            SUPGtau *= 0.5;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
@@ -191,7 +197,11 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
                     cell_mass_matrix(i, j) += fe_values_h.shape_value(j, q) * SUPGtau * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) / deltat * fe_values_h.JxW(q);
 
                     // SUPG stabilizer term for stiffness matrix
-                    cell_stiffness_matrix(i, j) += SUPGtau * (scalar_product(fe_values_h.shape_grad(j, q), u_exact) + fe_values_h.shape_value(j, q) * u_exact_div) * scalar_product(u_exact, fe_values_h.shape_grad(i, q)) * fe_values_h.JxW(q);
+                    cell_stiffness_matrix(i, j) += -SUPGtau * 
+                                (
+                                    fe_values_h.shape_grad(j, q) * u_exact +
+                                    fe_values_h.shape_value(j, q) * u_exact_div
+                                ) * u_exact * fe_values_h.shape_grad(i, q) * fe_values_h.JxW(q);
                 }
             }
         }

@@ -44,10 +44,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /u/sw/toolchains/gcc-glibc/11.2.0/base/bin/cmake -E rm -f
+RM = /usr/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -73,29 +73,29 @@ CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: CMakeFiles/shallow_water
 CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp
 CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o: CMakeFiles/shallow_waters.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o -MF CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o.d -o CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o -MF CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o.d -o CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp
 
 CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.i"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp > CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.i
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp > CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.i
 
 CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.s"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp -o CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.s
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/Shallow_waters.cpp -o CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.s
 
 CMakeFiles/shallow_waters.dir/src/main.cpp.o: CMakeFiles/shallow_waters.dir/flags.make
 CMakeFiles/shallow_waters.dir/src/main.cpp.o: /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp
 CMakeFiles/shallow_waters.dir/src/main.cpp.o: CMakeFiles/shallow_waters.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/shallow_waters.dir/src/main.cpp.o"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/shallow_waters.dir/src/main.cpp.o -MF CMakeFiles/shallow_waters.dir/src/main.cpp.o.d -o CMakeFiles/shallow_waters.dir/src/main.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/shallow_waters.dir/src/main.cpp.o -MF CMakeFiles/shallow_waters.dir/src/main.cpp.o.d -o CMakeFiles/shallow_waters.dir/src/main.cpp.o -c /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp
 
 CMakeFiles/shallow_waters.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/shallow_waters.dir/src/main.cpp.i"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp > CMakeFiles/shallow_waters.dir/src/main.cpp.i
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp > CMakeFiles/shallow_waters.dir/src/main.cpp.i
 
 CMakeFiles/shallow_waters.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/shallow_waters.dir/src/main.cpp.s"
-	/u/sw/toolchains/gcc-glibc/11.2.0/base/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp -o CMakeFiles/shallow_waters.dir/src/main.cpp.s
+	/usr/bin/mpicxx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/src/main.cpp -o CMakeFiles/shallow_waters.dir/src/main.cpp.s
 
 # Object files for target shallow_waters
 shallow_waters_OBJECTS = \
@@ -108,130 +108,207 @@ shallow_waters_EXTERNAL_OBJECTS =
 shallow_waters: CMakeFiles/shallow_waters.dir/src/Shallow_waters.cpp.o
 shallow_waters: CMakeFiles/shallow_waters.dir/src/main.cpp.o
 shallow_waters: CMakeFiles/shallow_waters.dir/build.make
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/dealii/9.5.1/lib/libdeal_II.so.9.5.1
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_iostreams.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_serialization.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_system.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_thread.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_regex.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_chrono.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_date_time.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/boost/1.76.0/lib/libboost_atomic.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkossimd.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkosalgorithms.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkoscontainers.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkoscore.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/librol.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libmuelu.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libmuelu-adapters.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libnox.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libnoxlapack.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libnoxepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libloca.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/liblocalapack.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/liblocaepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/liblocathyra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikosifpack.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikosml.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikosamesos.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikosaztecoo.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikosbelos.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libstratimikos.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libanasazi.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libanasaziepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libModeLaplace.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libanasazitpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libbelos.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libbelosepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libbelostpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libbelosxpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libml.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libifpack.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libamesos.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libgaleri-epetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libgaleri-xpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libaztecoo.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libisorropia.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libxpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libxpetra-sup.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libthyracore.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libthyraepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libthyraepetraext.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libthyratpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtrilinosss.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkostsqr.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtpetraclassic.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtpetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtpetrainout.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtpetraext.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libepetraext.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libtriutils.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libzoltan.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libepetra.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libsacado.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/librtop.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libkokkoskernels.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchoscore.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchosparser.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchosparameterlist.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchoscomm.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchosnumerics.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchosremainder.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchoskokkoscompat.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/trilinos/15.0.0/lib/libteuchoskokkoscomm.so.15.0
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/prefix/lib/libpthread.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libhwloc.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/tbb/2021.4.0/lib/libtbb.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/blacs/1.1/lib/libblacs.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/blacs/1.1/lib/libblacsF77init.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/adol-c/2.7.2/lib64/libadolc.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/arpack/3.8.0/lib/libarpack.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/gsl/2.7/lib/libgsl.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/gsl/2.7/lib/libgslcblas.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/petsc/3.15.1/lib/libslepc.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/petsc/3.15.1/lib/libpetsc.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/hypre/2.22.0/lib/libHYPRE.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libcmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libdmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libsmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libzmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libmumps_common.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/mumps/5.4.0/lib/libpord.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scalapack/2.1.0/lib/libscalapack.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libumfpack.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libklu.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libcholmod.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libbtf.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libccolamd.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libcolamd.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libcamd.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libamd.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/suitesparse/5.10.1/lib/libsuitesparseconfig.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/fftw/3.3.9/lib/libfftw3_mpi.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/fftw/3.3.9/lib/libfftw3.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/p4est/2.3.2/lib/libp4est.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/p4est/2.3.2/lib/libsc.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/openblas/0.3.15/lib/libopenblas.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libptesmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libptscotchparmetis.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libptscotch.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libptscotcherr.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libesmumps.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libscotch.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/scotch/6.1.1/lib/libscotcherr.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/netcdf/4.9.2/lib/libnetcdf.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/hdf5/1.12.0/lib/libhdf5hl_fortran.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/hdf5/1.12.0/lib/libhdf5_fortran.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/metis/5.1.0/lib/libmetis.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/hdf5/1.12.0/lib/libhdf5_hl.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/hdf5/1.12.0/lib/libhdf5.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/pkgs/metis/5.1.0/lib/libparmetis.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libz.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libbz2.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi_usempif08.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi_usempi_ignore_tkr.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi_mpifh.so
-shallow_waters: /u/sw/toolchains/gcc-glibc/11.2.0/base/lib/libmpi.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libdeal.ii.so.9.5.1
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtbb.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_pike-blackbox.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_trilinoscouplings.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_piro.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_rol.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_muelu.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_muelu_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_muelu_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_ifpack2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_ifpack2_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_ifpack2_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_amesos2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_xpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_xpetra_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_xpetra_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetraext_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetra_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetra_sd_pce_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetraext_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetra_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_tpetra_sd_mp_16_serial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos_sacado.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stokhos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_rythmos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_shylu_ddcommon.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_shylu_ddfrosch.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_shylu_ddbddc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_zoltan2sphynx.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_muelu-adapters.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_muelu-interface.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_muelu.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_moertel.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_locatpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_locathyra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_locaepetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_localapack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_loca.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_noxepetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_noxlapack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_nox.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_phalanx.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_intrepid2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_intrepid.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teko.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosbelos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosamesos2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosaztecoo.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosamesos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosml.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_stratimikosifpack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_ifpack2-adapters.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_ifpack2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_anasazitpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_ModeLaplace.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_anasaziepetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_anasazi.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_komplex.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_amesos2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tacho.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_shylu_nodehts.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_belosxpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_belostpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_belosepetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_belos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_ml.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_ifpack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_zoltan2.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_pamgen_extras.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_pamgen.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_amesos.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_galeri-xpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_galeri-epetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_aztecoo.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_dpliris.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_isorropia.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_xpetra-sup.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_xpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_thyratpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_thyraepetraext.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_thyraepetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_thyracore.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_trilinosss.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetraext.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetrainout.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_kokkostsqr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetraclassiclinalg.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetraclassicnodeapi.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_tpetraclassic.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_epetraext.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_triutils.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_shards.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_zoltan.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_epetra.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_sacado.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_rtop.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_kokkoskernels.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchoskokkoscomm.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchoskokkoscompat.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchosremainder.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchosnumerics.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchoscomm.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchosparameterlist.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchosparser.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_teuchoscore.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_kokkosalgorithms.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_kokkoscontainers.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libtrilinos_kokkoscore.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsmumps.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libdmumps.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcmumps.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libzmumps.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libpord.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmumps_common.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/hdf5/openmpi/libhdf5.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libptscotch.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libptscotcherr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libscotch.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libscotcherr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi_cxx.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libumfpack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcholmod.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libccolamd.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcolamd.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcamd.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsuitesparseconfig.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libamd.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmetis.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libadolc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_iostreams.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_system.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_thread.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_regex.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libparpack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libarpack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libassimp.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libgmpxx.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmpfr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libgmp.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libgmsh.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libgsl.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libgslcblas.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/hdf5/openmpi/lib/libhdf5.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcrypto.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libcurl.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsz.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libdl.a
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmuparser.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKBO.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKBool.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKBRep.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKernel.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKFeat.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKFillet.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKG2d.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKG3d.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKGeomAlgo.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKGeomBase.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKHLR.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKIGES.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKMath.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKMesh.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKOffset.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKPrim.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKShHealing.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKSTEP.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKSTEPAttr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKSTEPBase.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKSTEP209.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKSTL.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKTopAlgo.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libTKXSBase.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libp4est.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/liblapack.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libblas.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmpi_usempif08.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmpi_usempi_ignore_tkr.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libmpi_mpifh.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libopen-rte.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libopen-pal.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libhwloc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libevent_core.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libevent_pthreads.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libm.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libz.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libslepc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libpetsc.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsundials_idas.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsundials_arkode.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsundials_kinsol.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsundials_nvecserial.so
+shallow_waters: /usr/lib/x86_64-linux-gnu/libsundials_nvecparallel.so
 shallow_waters: CMakeFiles/shallow_waters.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable shallow_waters"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/shallow_waters.dir/link.txt --verbose=$(VERBOSE)
