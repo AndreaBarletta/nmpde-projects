@@ -1,3 +1,0 @@
-/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/shallow_waters.dir
-/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/edit_cache.dir
-/home/andrea/Polimi/Magistrale/NMPDE/Code/Project/nmpde-projects/build/CMakeFiles/rebuild_cache.dir
