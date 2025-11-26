@@ -46,8 +46,7 @@ public:
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            return 1.0 + 0.5 * std::sin(M_PI * p[0]) * std::cos(M_PI * p[1]) * std::cos(M_PI * get_time());
-            // return p[1] * std::sin(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::cos(0.5 * M_PI * p[1]);
+            return 0.5 + 0.2 * std::exp(-((p[0] - 0.3) * (p[0] - 0.3) + (p[1] - 0.3) * (p[1] - 0.3)) * 1000.0);
         }
     };
 
@@ -58,8 +57,8 @@ public:
         vector_value(const Point<dim> &p,
                      Vector<double> &values) const override
         {
-            values[0] = p[1] * std::sin(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::cos(0.5 * M_PI * p[1]);
-            values[1] = std::cos(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::sin(M_PI * p[1]);
+            values[0] = 0.0;
+            values[1] = 0.0;
         }
 
         virtual double
@@ -67,18 +66,18 @@ public:
               const unsigned int component = 0) const override
         {
             if (component == 0)
-                return p[1] * std::sin(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::cos(0.5 * M_PI * p[1]);
+                return 0.0;
             else
-                return std::cos(M_PI * get_time()) * std::sin(M_PI * p[0]) * std::sin(M_PI * p[1]);
+                return 0.0;
         }
+    };
 
-        double
-        divergence(const Point<dim> &p) const
+    class ForcingTerm_h : public Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            return M_PI*(
-                p[1]*std::sin(M_PI*get_time())*std::cos(M_PI*p[0])*std::cos(0.5*M_PI*p[1])+
-                std::cos(M_PI*get_time())*std::sin(M_PI*p[0])*std::cos(M_PI*p[1])
-            );
+            return 0.0;
         }
     };
 
@@ -116,17 +115,16 @@ public:
 
 protected:
     // Assemble the mass matrix, stiffness matrix and rhs for the height equation.
-    // Note that the SUPG stabilizer makes it necessary to recompute the mass matrix at each iteration
     void assemble_lhs_rhs_h(const double &time);
 
-    // void assemble_lhs_rhs_u(const double &time);
+    // Assemble the mass matrix, stiffness matrix and rhs for the velocity equation.
+    void assemble_lhs_rhs_u(const double &time);
 
     // Solve the problem for one time step.
-    void solve_time_step(/*TrilinosWrappers::SparseMatrix &,
+    void solve_time_step(TrilinosWrappers::SparseMatrix &,
                          TrilinosWrappers::MPI::Vector &,
                          TrilinosWrappers::MPI::Vector &,
-                         TrilinosWrappers::MPI::Vector &*/
-    );
+                         TrilinosWrappers::MPI::Vector &);
 
     // Output.
     void output(const unsigned int &time_step) const;
@@ -157,7 +155,7 @@ protected:
     const double f = 5.0e-3;
 
     // Gravitational acceleration
-    const double g = 2.5e-4;
+    const double g = 9.8067;
 
     // Friction coefficient
     const double cf = 1.0e-2;
@@ -165,6 +163,9 @@ protected:
     // Exact solutions
     ExactSolution_h exact_solution_h;
     ExactSolution_u exact_solution_u;
+
+    // Forcing term
+    ForcingTerm_h forcing_term_h;
 
     // Discretization. ///////////////////////////////////////////////////////////
 
@@ -206,23 +207,23 @@ protected:
 
     // Mass matrix M / deltat.
     TrilinosWrappers::SparseMatrix mass_matrix_h;
-    // TrilinosWrappers::SparseMatrix mass_matrix_u;
+    TrilinosWrappers::SparseMatrix mass_matrix_u;
 
     // Stiffness matrix A.
     TrilinosWrappers::SparseMatrix stiffness_matrix_h;
-    // TrilinosWrappers::SparseMatrix stiffness_matrix_u;
+    TrilinosWrappers::SparseMatrix stiffness_matrix_u;
 
     // Matrix on the left-hand side (M / deltat + theta A).
     TrilinosWrappers::SparseMatrix lhs_matrix_h;
-    // TrilinosWrappers::SparseMatrix lhs_matrix_u;
+    TrilinosWrappers::SparseMatrix lhs_matrix_u;
 
     // Matrix on the right-hand side (M / deltat - (1 - theta) A).
     TrilinosWrappers::SparseMatrix rhs_matrix_h;
-    // TrilinosWrappers::SparseMatrix rhs_matrix_u;
+    TrilinosWrappers::SparseMatrix rhs_matrix_u;
 
     // Right-hand side vector in the linear system.
     TrilinosWrappers::MPI::Vector system_rhs_h;
-    // TrilinosWrappers::MPI::Vector system_rhs_u;
+    TrilinosWrappers::MPI::Vector system_rhs_u;
 
     // System solution (without ghost elements).
     TrilinosWrappers::MPI::Vector solution_owned_h;
@@ -232,9 +233,9 @@ protected:
     TrilinosWrappers::MPI::Vector solution_h;
     TrilinosWrappers::MPI::Vector solution_u;
 
-    // Previous time step solutions (used to compute * variables).
-    // TrilinosWrappers::MPI::Vector previous_solution_h;
-    // TrilinosWrappers::MPI::Vector previous_solution_u;
+    // Previous time step solutions (used to compute u* or forcing term for velocity system).
+    TrilinosWrappers::MPI::Vector previous_solution_h;
+    TrilinosWrappers::MPI::Vector previous_solution_u;
 };
 
 #endif
