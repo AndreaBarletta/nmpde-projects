@@ -40,30 +40,36 @@ public:
     // Physical dimension (2D)
     static constexpr unsigned int dim = 2;
 
-    // Exact solutions.
-    class ExactSolution_h : public Function<dim>
+    // Intial conditions solutions.
+    class InitialConditions_h : public Function<dim>
     {
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            return 0.5 + 0.2 * std::exp(-((p[0] - 0.3) * (p[0] - 0.3) + (p[1] - 0.3) * (p[1] - 0.3)) * 1000.0);
+            // Centered Gaussian bump
+            // return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
+
+            // Offset Gaussian bump
+            // return 0.5 + 0.2 * std::exp(-((p[0] - 0.25) * (p[0] - 0.25) + (p[1] - 0.25) * (p[1] - 0.25)) * 500.0);
+
+            // Sloping plane
+            return 1.0 - 0.5 * p[0];
+
+            // Disappearing dam break
+            // return p[0] < 0.5 ? 1.0 : 0.5;
         }
     };
 
-    class ExactSolution_u : public Function<dim>
+    class InitialConditions_u : public Function<dim>
     {
     public:
-        virtual void
-        vector_value(const Point<dim> &p,
-                     Vector<double> &values) const override
+        virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
         {
             values[0] = 0.0;
             values[1] = 0.0;
         }
 
-        virtual double
-        value(const Point<dim> &p,
-              const unsigned int component = 0) const override
+        virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
         {
             if (component == 0)
                 return 0.0;
@@ -72,12 +78,60 @@ public:
         }
     };
 
+    // Exact solutions.
+    class ExactSolution_h : public Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 0.0;
+        }
+    };
+
+    class ExactSolution_u : public Function<dim>
+    {
+    public:
+        virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
+        {
+            values[0] = 0.0;
+            values[1] = 0.0;
+        }
+
+        virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
+        {
+            if (component == 0)
+                return 0.0;
+            else
+                return 0.0;
+        }
+    };
+
+    // Forcing terms (used mainly for manufactured-solution testing)
     class ForcingTerm_h : public Function<dim>
     {
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             return 0.0;
+        }
+    };
+
+    class ForcingTerm_u : public Function<dim>
+    {
+    public:
+        virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
+        {
+            values[0] = 0.0;
+
+            values[1] = 0.0;
+        }
+
+        virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
+        {
+            if (component == 0)
+                return 0.0;
+            else
+                return 0.0;
         }
     };
 
@@ -152,13 +206,17 @@ protected:
     // = 2*Lambda*sin(theta), where
     // Lambda is earth's rotation rate
     // theta is the latitude
-    const double f = 5.0e-3;
+    // const double f = 5.0e-3;
 
     // Gravitational acceleration
-    const double g = 9.8067;
+    const double g = 9.81e-1;
 
     // Friction coefficient
-    const double cf = 1.0e-2;
+    const double cf = 3.0e0;
+
+    // Initial conditions
+    InitialConditions_h initial_conditions_h;
+    InitialConditions_u initial_conditions_u;
 
     // Exact solutions
     ExactSolution_h exact_solution_h;
@@ -166,6 +224,7 @@ protected:
 
     // Forcing term
     ForcingTerm_h forcing_term_h;
+    ForcingTerm_u forcing_term_u;
 
     // Discretization. ///////////////////////////////////////////////////////////
 
