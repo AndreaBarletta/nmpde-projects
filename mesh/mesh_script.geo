@@ -24,4 +24,7 @@ Mesh 2;
 
 // Save mesh to file.
 str_h = Sprintf("%f", h);
-Save StrCat("mesh-square-h", str_h, ".msh");
+Save StrCat("mesh-square-h", str_h, ".msh");//+
+Line(5) = {3, 2};
+//+
+Point(5) = {0.5, 0.75, 0, 1.0};

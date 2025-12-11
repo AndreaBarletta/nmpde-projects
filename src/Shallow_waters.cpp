@@ -138,6 +138,14 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
     stiffness_matrix_h = 0.0;
     system_rhs_h = 0.0;
 
+    // SUPG tau diagnostics and caps
+    double tau_min = std::numeric_limits<double>::infinity();
+    double tau_max = 0.0;
+    double tau_sum = 0.0;
+    std::size_t tau_count = 0;
+    const double tau_min_cap = 1e-12; // avoid zero
+    const double tau_max_cap = 1e2;   // avoid excessive stabilization
+
     auto cell_h = dof_handler_h.begin_active();
     auto cell_u = dof_handler_u.begin_active();
 
@@ -163,12 +171,23 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
         std::vector<Vector<double>> u_prevprev(n_q, Vector<double>(dim));
         fe_values_u.get_function_values(previous_solution_u, u_prevprev);
 
+        // div u at time n on the quadrature points of this cell
+        std::vector<double> div_u_prev(n_q);
+        fe_values_u[FEValuesExtractors::Vector(0)].get_function_divergences(solution_u, div_u_prev);
+
+        // div u at time n-1 on the quadrature points of this cell
+        std::vector<double> div_u_prevprev(n_q);
+        fe_values_u[FEValuesExtractors::Vector(0)].get_function_divergences(previous_solution_u, div_u_prevprev);
+
         for (unsigned int q = 0; q < n_q; ++q)
         {
-            // we interpolate u at time n+1/2 = 3/2 u^n - 1/2 u^{n-1}
+            // We interpolate u at time n+1/2 = 3/2 u^n - 1/2 u^{n-1}
             Tensor<1, dim> u_interp;
             for (unsigned int d = 0; d < dim; ++d)
                 u_interp[d] = 1.5 * u_prev[q][d] - 0.5 * u_prevprev[q][d];
+
+            // Same for div u
+            const double div_u_interp = 1.5 * div_u_prev[q] - 0.5 * div_u_prevprev[q];
 
             forcing_term_h.set_time(time);
             const double f_new_loc =
@@ -185,28 +204,41 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
             double SUPGtau = 1.0/std::sqrt(tau1 + tau2);
 
+
+            //  i is the test function, j is the solution function
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-                //  i is the test function, j is the solution function
+                // Compute the SS operator Lss(phi_i)
+                double Lss = u_interp * fe_values_h.shape_grad(i,q) + 1.0/2.0 * div_u_interp * fe_values_h.shape_value(i,q);
+
+                // phi_i terms
+                double phi_i = fe_values_h.shape_value(i,q);
+                Tensor<1, dim> grad_phi_i = fe_values_h.shape_grad(i,q);
+
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
+                    // phi_j terms
+                    double phi_j = fe_values_h.shape_value(j,q);
+                    Tensor<1, dim> grad_phi_j = fe_values_h.shape_grad(j,q);
+
                     // Mass term
-                    cell_mass_matrix(i, j) += fe_values_h.shape_value(i, q) * fe_values_h.shape_value(j, q) / deltat * fe_values_h.JxW(q);
+                    cell_mass_matrix(i, j) += phi_i * phi_j / deltat * fe_values_h.JxW(q);
 
                     // Stiffness term
-                    cell_stiffness_matrix(i, j) += -u_interp * fe_values_h.shape_grad(i, q) * fe_values_h.shape_value(j, q) * fe_values_h.JxW(q);
+                    cell_stiffness_matrix(i, j) += -u_interp * grad_phi_i * phi_j * fe_values_h.JxW(q);
 
-                    // SUPG "mass-like" term
-                    cell_mass_matrix(i,j) += SUPGtau * u_interp * fe_values_h.shape_grad(i,q) * fe_values_h.shape_value(j,q) / deltat * fe_values_h.JxW(q);
+                    // SUPG "mass-like" term (come from dh/dt)
+                    cell_mass_matrix(i,j) += SUPGtau * Lss * phi_j * fe_values_h.JxW(q);
 
                     // SUPG "stiffness-like" term
-                    cell_stiffness_matrix(i,j) += SUPGtau * u_interp * fe_values_h.shape_grad(i,q) * u_interp * fe_values_h.shape_grad(j,q) * fe_values_h.JxW(q);
+                    cell_stiffness_matrix(i,j) += SUPGtau * (phi_i * div_u_interp + grad_phi_j * u_interp) * Lss * fe_values_h.JxW(q);
                 }
 
-                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * fe_values_h.shape_value(i, q) * fe_values_h.JxW(q);
+                // Forcing term
+                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * phi_i * fe_values_h.JxW(q);
 
-                // SUPG rhs term
-                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * SUPGtau * u_interp * fe_values_h.shape_grad(i, q) * fe_values_h.JxW(q);
+                // SUPG RHS term
+                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * SUPGtau * Lss * fe_values_h.JxW(q);
             }
         }
 
@@ -231,24 +263,6 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
     // Assemble rhs vector
     rhs_matrix_h.vmult_add(system_rhs_h, solution_owned_h);
-
-    // // Boundary conditions.
-    // {
-    //     std::map<types::global_dof_index, double> boundary_values;
-
-    //     std::map<types::boundary_id, const Function<dim> *> boundary_functions;
-
-    //     exact_solution_h.set_time(time);
-    //     for (unsigned int i = 0; i < 4; ++i)
-    //         boundary_functions[i] = &exact_solution_h;
-
-    //     VectorTools::interpolate_boundary_values(dof_handler_h,
-    //                                              boundary_functions,
-    //                                              boundary_values);
-
-    //     MatrixTools::apply_boundary_values(
-    //         boundary_values, lhs_matrix_h, solution_owned_h, system_rhs_h, false);
-    // }
 }
 
 void Shallow_waters::assemble_lhs_rhs_u(const double &time)
@@ -308,12 +322,12 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
         fe_values_u.get_function_values(previous_solution_u, u_prevprev);
 
         // h at time n+1 on the quadrature points of this cell
-        std::vector<Tensor<1, dim>> h_curr_grad(n_q);
-        fe_values_h.get_function_gradients(solution_h, h_curr_grad);
+        std::vector<double> h_curr(n_q);
+        fe_values_h.get_function_values(solution_h, h_curr);
 
         // h at time n on the quadrature points of this cell
-        std::vector<Tensor<1, dim>> h_prev_grad(n_q);
-        fe_values_h.get_function_gradients(previous_solution_h, h_prev_grad);
+        std::vector<double> h_prev(n_q);
+        fe_values_h.get_function_values(previous_solution_h, h_prev);
 
         for (unsigned int q = 0; q < n_q; ++q)
         {
@@ -322,6 +336,12 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
             for (unsigned int d = 0; d < dim; ++d)
                 u_interp[d] = 1.5 * u_prev[q][d] - 0.5 * u_prevprev[q][d];
 
+            // Compute SUPG parameter
+            double tau1 = std::pow(2.0/deltat,2.0);
+            double tau2 = std::pow(2.0*u_interp.norm()/cell_h->diameter(),2.0);
+
+            double SUPGtau = 1.0/std::sqrt(tau1 + tau2);
+                
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
                 //  i is the test function, j is the solution function
@@ -330,12 +350,15 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
                     // Mass term
                     cell_mass_matrix(i, j) += fe_values_u[displacement].value(i, q) * fe_values_u[displacement].value(j, q) / deltat * fe_values_u.JxW(q);
 
-                    // Stiffness term (u* grad)u
+                    // Linearized Convective term (u* grad)u
                     cell_stiffness_matrix(i, j) += u_interp * fe_values_u[displacement].gradient(i,q) * fe_values_u[displacement].value(j,q) * fe_values_u.JxW(q);
+                    
+                    // Friction term cf/a ||u|| u
+                    cell_stiffness_matrix(i, j) += cf / (h_curr[q]) * u_interp.norm() * fe_values_u[displacement].value(i,q) * fe_values_u[displacement].value(j,q) * fe_values_u.JxW(q);
                 }
 
-                // This should include the weird forcing terms (coriolis, gravity, ...). For now just skip them
-                cell_rhs(i) += - g * (theta * h_curr_grad[q] + (1.0 - theta) * h_prev_grad[q]) * fe_values_u[displacement].value(i,q) * fe_values_u.JxW(q);
+                // g grad H term
+                cell_rhs(i) += g * (theta * h_curr[q] + (1.0 - theta) * h_prev[q]) * fe_values_u[displacement].divergence(i,q) * fe_values_u.JxW(q);
             }
         }
 
@@ -361,22 +384,22 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
     // Assemble rhs vector
     rhs_matrix_u.vmult_add(system_rhs_u, solution_owned_u);
 
-    // // Boundary conditions.
-    // {
-    //     std::map<types::global_dof_index, double> boundary_values;
-    //     std::map<types::boundary_id, const Function<dim> *> boundary_functions;
+    // Boundary conditions.
+    {
+        std::map<types::global_dof_index, double> boundary_values;
+        std::map<types::boundary_id, const Function<dim> *> boundary_functions;
 
-    //     Functions::ZeroFunction<dim> zero_function(dim);
-    //     for (unsigned int i = 0; i < 4; ++i)
-    //         boundary_functions[i] = &zero_function;
+        Functions::ZeroFunction<dim> zero_function(dim);
+        for (unsigned int i = 0; i < 4; ++i)
+            boundary_functions[i] = &zero_function;
 
-    //     VectorTools::interpolate_boundary_values(dof_handler_u,
-    //                                              boundary_functions,
-    //                                              boundary_values);
+        VectorTools::interpolate_boundary_values(dof_handler_u,
+                                                 boundary_functions,
+                                                 boundary_values);
 
-    //     MatrixTools::apply_boundary_values(
-    //         boundary_values, lhs_matrix_u, solution_owned_u, system_rhs_u, false);
-    // }
+        MatrixTools::apply_boundary_values(
+            boundary_values, lhs_matrix_u, solution_owned_u, system_rhs_u, false);
+    }
 }
 
 void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
@@ -395,7 +418,7 @@ void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
     preconditioner.initialize(lhs_matrix);
 
     pcout << "Solving the linear system" << std::endl;
-    solver.solve(lhs_matrix, solution_owned, system_rhs, PreconditionIdentity());
+    solver.solve(lhs_matrix, solution_owned, system_rhs, preconditioner);
     pcout << "  " << solver_control.last_step() << " GMRES iterations"
           << std::endl;
 
@@ -435,12 +458,12 @@ void Shallow_waters::solve()
     {
         pcout << "Applying the initial condition" << std::endl;
 
-        exact_solution_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+        initial_conditions_h.set_time(time);
+        VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
         solution_h = solution_owned_h;
 
-        exact_solution_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+        initial_conditions_u.set_time(time);
+        VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
         solution_u = solution_owned_u;
 
         // Output the initial solution.
@@ -448,21 +471,9 @@ void Shallow_waters::solve()
 
         previous_solution_h = solution_h;
         previous_solution_u = solution_u;
-
-        time += deltat;
-
-        exact_solution_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-        solution_h = solution_owned_h;
-
-        exact_solution_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
-        solution_u = solution_owned_u;
-
-        output(1);
     }
 
-    unsigned int time_step = 1;
+    unsigned int time_step = 0.0;
 
     while (time < T - 0.5 * deltat)
     {
