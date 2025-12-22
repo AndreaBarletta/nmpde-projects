@@ -30,6 +30,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <chrono>
 
 using namespace dealii;
 
@@ -202,16 +203,10 @@ protected:
     // Final time.
     const double T;
 
-    // Coriolis parameter
-    // = 2*Lambda*sin(theta), where
-    // Lambda is earth's rotation rate
-    // theta is the latitude
-    // const double f = 5.0e-3;
-
     // Gravitational acceleration
     const double g = 9.81e-1;
 
-    // Friction coefficient
+    // Chézy’s friction coefficient
     const double cf = 3.0e0;
 
     // Initial conditions

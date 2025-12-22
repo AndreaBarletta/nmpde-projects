@@ -111,7 +111,7 @@ void Shallow_waters::setup()
 
 void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 {
-    pcout << "===============================================" << std::endl;
+    pcout << "-----------------------------------------------" << std::endl;
     pcout << "  Assembling the lhs and rhs for the height system" << std::endl;
 
     const unsigned int dofs_per_cell = fe_h->dofs_per_cell;
@@ -137,14 +137,6 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
     mass_matrix_h = 0.0;
     stiffness_matrix_h = 0.0;
     system_rhs_h = 0.0;
-
-    // SUPG tau diagnostics and caps
-    double tau_min = std::numeric_limits<double>::infinity();
-    double tau_max = 0.0;
-    double tau_sum = 0.0;
-    std::size_t tau_count = 0;
-    const double tau_min_cap = 1e-12; // avoid zero
-    const double tau_max_cap = 1e2;   // avoid excessive stabilization
 
     auto cell_h = dof_handler_h.begin_active();
     auto cell_u = dof_handler_u.begin_active();
@@ -203,6 +195,8 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
             double tau2 = std::pow(2.0*u_interp.norm()/cell_h->diameter(),2.0);
 
             double SUPGtau = 1.0/std::sqrt(tau1 + tau2);
+
+            // SUPGtau = 0; // DISABLE SUPG
 
 
             //  i is the test function, j is the solution function
@@ -267,7 +261,7 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
 void Shallow_waters::assemble_lhs_rhs_u(const double &time)
 {
-    pcout << "===============================================" << std::endl;
+    pcout << "-----------------------------------------------" << std::endl;
     pcout << "  Assembling the lhs and rhs for the velocity system" << std::endl;
 
     const unsigned int dofs_per_cell = fe_u->dofs_per_cell;
@@ -336,29 +330,52 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
             for (unsigned int d = 0; d < dim; ++d)
                 u_interp[d] = 1.5 * u_prev[q][d] - 0.5 * u_prevprev[q][d];
 
-            // Compute SUPG parameter
-            double tau1 = std::pow(2.0/deltat,2.0);
-            double tau2 = std::pow(2.0*u_interp.norm()/cell_h->diameter(),2.0);
+            // Compute forcing term
+            forcing_term_u.set_time(time);
+            Vector<double> f_new_loc(dim);
+                forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_new_loc);
 
-            double SUPGtau = 1.0/std::sqrt(tau1 + tau2);
+            forcing_term_u.set_time(time - deltat);
+            Vector<double> f_old_loc(dim);
+            forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_old_loc);
+
+            // Convert to Tensor for easier computation
+            Tensor<1, dim> f_new_loc_tensor;
+            Tensor<1, dim> f_old_loc_tensor;
+            for (unsigned int d = 0; d < dim; ++d)
+            {
+                f_new_loc_tensor[d] = f_new_loc[d];
+                f_old_loc_tensor[d] = f_old_loc[d];
+            }
                 
+            //  i is the test function, j is the solution function
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-                //  i is the test function, j is the solution function
+                // phi_i terms
+                Tensor<1, dim> phi_i = fe_values_u[displacement].value(i, q);
+                Tensor<2, dim> grad_phi_i = fe_values_u[displacement].gradient(i,q);
+
                 for (unsigned int j = 0; j < dofs_per_cell; ++j)
                 {
+                     // phi_j terms
+                    Tensor<1, dim> phi_j = fe_values_u[displacement].value(j, q);
+                    Tensor<2, dim> grad_phi_j = fe_values_u[displacement].gradient(j,q);
+
                     // Mass term
-                    cell_mass_matrix(i, j) += fe_values_u[displacement].value(i, q) * fe_values_u[displacement].value(j, q) / deltat * fe_values_u.JxW(q);
+                    cell_mass_matrix(i, j) += phi_i * phi_j / deltat * fe_values_u.JxW(q);
 
                     // Linearized Convective term (u* grad)u
-                    cell_stiffness_matrix(i, j) += u_interp * fe_values_u[displacement].gradient(i,q) * fe_values_u[displacement].value(j,q) * fe_values_u.JxW(q);
+                    cell_stiffness_matrix(i, j) += u_interp * grad_phi_i * phi_j * fe_values_u.JxW(q);
                     
                     // Friction term cf/a ||u|| u
-                    cell_stiffness_matrix(i, j) += cf / (h_curr[q]) * u_interp.norm() * fe_values_u[displacement].value(i,q) * fe_values_u[displacement].value(j,q) * fe_values_u.JxW(q);
+                    cell_stiffness_matrix(i, j) += cf / (h_curr[q]) * u_interp.norm() * phi_i * phi_j * fe_values_u.JxW(q);
                 }
 
                 // g grad H term
                 cell_rhs(i) += g * (theta * h_curr[q] + (1.0 - theta) * h_prev[q]) * fe_values_u[displacement].divergence(i,q) * fe_values_u.JxW(q);
+
+                 // Forcing term
+                cell_rhs(i) += (theta * f_new_loc_tensor + (1.0 - theta) * f_old_loc_tensor) * phi_i * fe_values_u.JxW(q);
             }
         }
 
@@ -408,7 +425,7 @@ void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
                                      TrilinosWrappers::MPI::Vector &solution
 )
 {
-    pcout << "===============================================" << std::endl;
+    pcout << "-----------------------------------------------" << std::endl;
 
     SolverControl solver_control(2000, 1e-6 * system_rhs.l2_norm());
 
@@ -483,7 +500,9 @@ void Shallow_waters::solve()
         pcout << "===============================================" << std::endl;
         pcout << "n = " << std::setw(3) << time_step << ", t = " << std::setw(5)
               << time << std::endl;
-        pcout << "-----------------------------------------------" << std::endl;
+
+        // start timing
+        auto start = std::chrono::high_resolution_clock::now();
 
         // Solve for h.
         assemble_lhs_rhs_h(time);
@@ -499,8 +518,14 @@ void Shallow_waters::solve()
         // // Now solution_u contains u at timestep n+1, previous_solution_u contains u at timestep n
         // // The next iteration (n=n+1) will therefore have solution_u at timestep n and previous_solution_u at timestep n-1
 
+        // end timing
+        auto end = std::chrono::high_resolution_clock::now();
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
         // Output the solution
         output(time_step);
+        pcout << "-----------------------------------------------" << std::endl;
+        pcout << "Time step computation time: " << ns << " ns" << std::endl;
     }
 }
 
