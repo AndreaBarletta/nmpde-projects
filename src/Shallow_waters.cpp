@@ -474,10 +474,16 @@ void Shallow_waters::solve()
     {
         pcout << "Applying the initial condition" << std::endl;
 
+        #ifdef TEST_MANUFACTURED_H
+        exact_solution_h.set_time(time);
+        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+        solution_h = solution_owned_h;
+        #else
         initial_conditions_h.set_time(time);
         VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
         solution_h = solution_owned_h;
-
+        #endif
+        
         initial_conditions_u.set_time(time);
         VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
         solution_u = solution_owned_u;

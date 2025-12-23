@@ -4,10 +4,10 @@ import sympy as sp
 def manufactured_H():
     x, y, t = sp.symbols('x y t')
 
-    u = 1
-    v = 0
+    u = y * sp.sin(sp.pi * t) * sp.cos(sp.pi * x) * sp.cos(sp.pi/2 * y)
+    v = sp.cos(sp.pi * t) * sp.sin(sp.pi * x) * sp.sin(sp.pi * x)
 
-    H_man = sp.sin(2*sp.pi*(x - t)) * sp.sin(2*sp.pi*y)
+    H_man = 1 + 0.5 * sp.sin(sp.pi * x) * sp.sin(sp.pi * y) * sp.cos(sp.pi * t)
 
     H_t = sp.diff(H_man, t)
     H_x = sp.diff(H_man, x)
@@ -22,14 +22,12 @@ def manufactured_H():
     print("Source term S_H(x,y,t):", S_H)
 
 def manufactured_U():
-    x, y, t = sp.symbols('x y t')
+    x, y, t, g, cf = sp.symbols('x y t g cf')
 
-    u_man = sp.sin(2*sp.pi*x * sp.sin(2*sp.pi*y))*sp.cos(2*sp.pi*t)
-    v_man = sp.sin(2*sp.pi*x * sp.sin(2*sp.pi*y))*sp.cos(2*sp.pi*t)
+    u_man = y * sp.sin(sp.pi * t) * sp.cos(sp.pi * x) * sp.cos(sp.pi/2 * y)
+    v_man = sp.cos(sp.pi * t) * sp.sin(sp.pi * x) * sp.sin(sp.pi * x)
 
-    H = x * 1/(t+1)
-
-    g = 9.8067
+    H = 1 + 0.5 * sp.sin(sp.pi * x) * sp.sin(sp.pi * y) * sp.cos(sp.pi * t)
 
     u_x = sp.diff(u_man,x)
     u_y = sp.diff(u_man,y)
@@ -42,8 +40,10 @@ def manufactured_U():
     H_x = sp.diff(H,x)
     H_y = sp.diff(H,y)
 
-    S_u = u_t + u_man * u_x + v_man * u_y + g * H_x
-    S_v = v_t + u_man * v_x + v_man * v_y + g * H_y
+    U_norm = sp.sqrt(u_man**2 + v_man**2)
+
+    S_u = u_t + u_man * u_x + v_man * u_y + g * H_x + cf/H * U_norm * u_man
+    S_v = v_t + u_man * v_x + v_man * v_y + g * H_y + cf/H * U_norm * v_man
 
     S_u = sp.simplify(S_u)
     S_v = sp.simplify(S_v)
@@ -55,7 +55,7 @@ def manufactured_U():
     print("Source term S_v(x,y,t):", S_v)
 
 if __name__ == "__main__":
-    # print("Manufactured solution for H:")
-    # manufactured_H()
+    print("Manufactured solution for H:")
+    manufactured_H()
     print("\nManufactured solution for U:")
     manufactured_U()
