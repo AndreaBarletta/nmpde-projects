@@ -88,16 +88,8 @@ public:
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
 
-            return 1 + 0.5 * cos(pi*t) * sin(pi*x) * sin(pi*y);
-
-            #undef sin
-            #undef cos
-            #undef pow
+            return  0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0;
         }
     };
 
@@ -109,19 +101,9 @@ public:
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
-            #define sqrt std::sqrt
 
-            values[0] = y * sin(pi*t) * cos(pi*x) * cos(pi*y/2);
-            values[1] = pow(sin(pi*x),2) * cos(pi*t);
-
-            #undef sin
-            #undef cos
-            #undef pow
-            #undef sqrt
+            values[0] = y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y);
+            values[1] = std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t);
         }
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
@@ -129,19 +111,11 @@ public:
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
 
             if (component == 0)
-                return y * sin(pi*t) * cos(pi*x) * cos(pi*y/2);
+                return y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y);
             else
-                return pow(sin(pi*x),2) * cos(pi*t);
-
-            #undef sin
-            #undef cos
-            #undef pow
+                return std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t);
         }
     };
 
@@ -151,27 +125,16 @@ public:
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            #ifdef TEST_MANUFACTURED_H
+#ifdef TEST_MANUFACTURED_H
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
 
-            return 0.5 * pi * (
-                    y * sin(pi*t) * sin(pi*y) * cos(pi*t) * pow(cos(pi*x),2) * cos(pi*y/2)
-                  - sin(pi*t) * sin(pi*x) * sin(pi*y)
-                  + pow(sin(pi*x),3) * pow(cos(pi*t),2) * cos(pi*y)
-            );
+            return 0.5 * M_PI * (y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) * std::cos(M_PI * y) - std::sin(M_PI * t) * std::cos(M_PI * y) - std::sin(M_PI * x) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x);
 
-            #undef sin
-            #undef cos
-            #undef pow
-            #else
+#else
             return 0.0;
-            #endif
+#endif
         }
     };
 
@@ -180,113 +143,40 @@ public:
     public:
         virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
         {
-            #ifdef TEST_MANUFACTURED_U
+#ifdef TEST_MANUFACTURED_U
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
             const double g = Shallow_waters::g;
             const double cf = Shallow_waters::cf;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
-            #define sqrt std::sqrt
 
-            values[0] = (
-                2 * cf * y * sqrt(
-                        pow(y,2) * pow(sin(pi*t), 2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
-                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
-                    ) * sin(pi*t) * cos(pi*y/2)
-                + (1.0 + 0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t)) 
-                    * (1.0 * pi * g * sin(pi*y) * cos(pi*t)
-                        - 2 * pi * pow(y,2) * pow(sin(pi*t),2) * sin(pi*x) * pow(cos(pi*y/2),2)
-                        + 2 * pi * y * cos(pi*t) * cos(pi*y/2)
-                        - (pi * y * sin(pi*y/2) - 2 * cos(pi*y/2)) * sin(pi*t) * pow(sin(pi*x),2) * cos(pi*t)
-                    )
-                ) * cos(pi*x)
-                / (2 * (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0));
+            values[0] = (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+            values[1] = (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
 
-
-            values[1] = (
-                cf * sqrt(
-                        pow(y,2) * pow(sin(pi*t),2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
-                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
-                    ) * sin(pi*x) * cos(pi*t)
-                + pi * (
-                        0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) 
-                        + 1.0
-                    ) * (
-                        0.5 * g * cos(pi*t) * cos(pi*y)
-                        + 2 * y * sin(pi*t) * cos(pi*t) * pow(cos(pi*x),2) * cos(pi*y/2)
-                        - sin(pi*t) * sin(pi*x)
-                    )
-                ) * sin(pi*x)
-                / (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0);
-            
-            #undef sin
-            #undef cos
-            #undef pow
-            #undef sqrt
-
-            #else
+#else
             values[0] = 0.0;
             values[1] = 0.0;
-            #endif
+#endif
         }
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
         {
-            #ifdef TEST_MANUFACTURED_U
+#ifdef TEST_MANUFACTURED_U
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
-            const double pi = M_PI;
             const double g = Shallow_waters::g;
             const double cf = Shallow_waters::cf;
-            #define sin std::sin
-            #define cos std::cos
-            #define pow std::pow
-            #define sqrt std::sqrt
 
-            if (component == 0) return (
-                2 * cf * y * sqrt(
-                        pow(y,2) * pow(sin(pi*t), 2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
-                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
-                    ) * sin(pi*t) * cos(pi*y/2)
-                + (1.0 + 0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t)) 
-                    * (1.0 * pi * g * sin(pi*y) * cos(pi*t)
-                        - 2 * pi * pow(y,2) * pow(sin(pi*t),2) * sin(pi*x) * pow(cos(pi*y/2),2)
-                        + 2 * pi * y * cos(pi*t) * cos(pi*y/2)
-                        - (pi * y * sin(pi*y/2) - 2 * cos(pi*y/2)) * sin(pi*t) * pow(sin(pi*x),2) * cos(pi*t)
-                    )
-                ) * cos(pi*x)
-                / (2 * (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0));
-            else return (
-                cf * sqrt(
-                        pow(y,2) * pow(sin(pi*t),2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
-                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
-                    ) * sin(pi*x) * cos(pi*t)
-                + pi * (
-                        0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) 
-                        + 1.0
-                    ) * (
-                        0.5 * g * cos(pi*t) * cos(pi*y)
-                        + 2 * y * sin(pi*t) * cos(pi*t) * pow(cos(pi*x),2) * cos(pi*y/2)
-                        - sin(pi*t) * sin(pi*x)
-                    )
-                ) * sin(pi*x)
-                / (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0);
-            
-            #undef sin
-            #undef cos
-            #undef pow
-            #undef sqrt
-            #else
+            if (component == 0) return (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+            else return (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+
+#else
             if (component == 0)
                 return 0.0;
             else
                 return 0.0;
-            #endif
+#endif
         }
     };
 
