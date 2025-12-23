@@ -198,7 +198,6 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
             // SUPGtau = 0; // DISABLE SUPG
 
-
             //  i is the test function, j is the solution function
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
@@ -225,7 +224,7 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
                     cell_mass_matrix(i,j) += SUPGtau * Lss * phi_j * fe_values_h.JxW(q);
 
                     // SUPG "stiffness-like" term
-                    cell_stiffness_matrix(i,j) += SUPGtau * (phi_i * div_u_interp + grad_phi_j * u_interp) * Lss * fe_values_h.JxW(q);
+                    cell_stiffness_matrix(i,j) += SUPGtau * (phi_j * div_u_interp + grad_phi_j * u_interp) * Lss * fe_values_h.JxW(q);
                 }
 
                 // Forcing term
