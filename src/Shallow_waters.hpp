@@ -85,7 +85,6 @@ public:
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            #ifdef TEST_MANUFACTURED_H
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
@@ -99,9 +98,6 @@ public:
             #undef sin
             #undef cos
             #undef pow
-            #else
-            return 0.0;
-            #endif
         }
     };
 
@@ -110,7 +106,6 @@ public:
     public:
         virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
         {
-            #ifnef TEST_MANUFACTURED_U
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
@@ -127,15 +122,10 @@ public:
             #undef cos
             #undef pow
             #undef sqrt
-            #else
-            values[0] = 0.0;
-            values[1] = 0.0;
-            #endif
         }
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
         {
-            #ifdef TEST_MANUFACTURED_U
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
@@ -148,16 +138,10 @@ public:
                 return y * sin(pi*t) * cos(pi*x) * cos(pi*y/2);
             else
                 return pow(sin(pi*x),2) * cos(pi*t);
+
             #undef sin
             #undef cos
             #undef pow
-            
-            #else
-            if (component == 0)
-                return 0.0;
-            else
-                return 0.0;
-            #endif
         }
     };
 
@@ -167,7 +151,7 @@ public:
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-            #ifdef TEST_MANUFACTURED
+            #ifdef TEST_MANUFACTURED_H
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
@@ -196,7 +180,7 @@ public:
     public:
         virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
         {
-            #ifdef TEST_MANUFACTURED
+            #ifdef TEST_MANUFACTURED_U
             const double t = this->get_time();
             const double x = p[0];
             const double y = p[1];
@@ -252,10 +236,57 @@ public:
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
         {
+            #ifdef TEST_MANUFACTURED_U
+            const double t = this->get_time();
+            const double x = p[0];
+            const double y = p[1];
+            const double pi = M_PI;
+            const double g = Shallow_waters::g;
+            const double cf = Shallow_waters::cf;
+            #define sin std::sin
+            #define cos std::cos
+            #define pow std::pow
+            #define sqrt std::sqrt
+
+            if (component == 0) return (
+                2 * cf * y * sqrt(
+                        pow(y,2) * pow(sin(pi*t), 2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
+                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
+                    ) * sin(pi*t) * cos(pi*y/2)
+                + (1.0 + 0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t)) 
+                    * (1.0 * pi * g * sin(pi*y) * cos(pi*t)
+                        - 2 * pi * pow(y,2) * pow(sin(pi*t),2) * sin(pi*x) * pow(cos(pi*y/2),2)
+                        + 2 * pi * y * cos(pi*t) * cos(pi*y/2)
+                        - (pi * y * sin(pi*y/2) - 2 * cos(pi*y/2)) * sin(pi*t) * pow(sin(pi*x),2) * cos(pi*t)
+                    )
+                ) * cos(pi*x)
+                / (2 * (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0));
+            else return (
+                cf * sqrt(
+                        pow(y,2) * pow(sin(pi*t),2) * pow(cos(pi*x),2) * pow(cos(pi*y/2),2)
+                        + pow(sin(pi*x),4) * pow(cos(pi*t),2)
+                    ) * sin(pi*x) * cos(pi*t)
+                + pi * (
+                        0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) 
+                        + 1.0
+                    ) * (
+                        0.5 * g * cos(pi*t) * cos(pi*y)
+                        + 2 * y * sin(pi*t) * cos(pi*t) * pow(cos(pi*x),2) * cos(pi*y/2)
+                        - sin(pi*t) * sin(pi*x)
+                    )
+                ) * sin(pi*x)
+                / (0.5 * sin(pi*x) * sin(pi*y) * cos(pi*t) + 1.0);
+            
+            #undef sin
+            #undef cos
+            #undef pow
+            #undef sqrt
+            #else
             if (component == 0)
                 return 0.0;
             else
                 return 0.0;
+            #endif
         }
     };
 
