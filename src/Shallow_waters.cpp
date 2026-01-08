@@ -476,22 +476,21 @@ void Shallow_waters::solve()
     {
         pcout << "Applying the initial condition" << std::endl;
 
-
-#if defined(TEST_MANUFACTURED_H) || defined(TEST_MANUFACTURED_U) // On manufactured solutions, set initial condition to exact solution
-        exact_solution_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-        solution_h = solution_owned_h;
-        exact_solution_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
-        solution_u = solution_owned_u;
-#else
-        initial_conditions_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
-        solution_h = solution_owned_h;
-        initial_conditions_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
-        solution_u = solution_owned_u;
-#endif
+        if constexpr (ENABLE_MANUFACTURED_H || ENABLE_MANUFACTURED_U) { // On manufactured solutions, set initial condition to exact solution
+            exact_solution_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            solution_h = solution_owned_h;
+            exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            solution_u = solution_owned_u;
+        } else {
+            initial_conditions_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
+            solution_h = solution_owned_h;
+            initial_conditions_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
+            solution_u = solution_owned_u;
+        }
 
         // Output the initial solution.
         output(0);
@@ -514,32 +513,32 @@ void Shallow_waters::solve()
         // start timing
         auto start = std::chrono::high_resolution_clock::now();
 
-#ifdef TEST_MANUFACTURED_U // Set exact H on manufactured test for U
-        exact_solution_h.set_time(time);
-        VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-        solution_h = solution_owned_h;
-#else
-        // Solve for h.
-        assemble_lhs_rhs_h(time);
-        previous_solution_h = solution_h;
-        solve_time_step(lhs_matrix_h, system_rhs_h, solution_owned_h, solution_h);
-        // Now solution_h contains h at timestep n+1, previous_solution_h contains h at timestep n
-        // The next iteration (n=n+1) will therefore have solution_h at timestep n and previous_solution_h at timestep n-1
-#endif
+        if constexpr (ENABLE_MANUFACTURED_U) { // Set exact H on manufactured test for U
+            exact_solution_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            solution_h = solution_owned_h;
+        } else {
+            // Solve for h.
+            assemble_lhs_rhs_h(time);
+            previous_solution_h = solution_h;
+            solve_time_step(lhs_matrix_h, system_rhs_h, solution_owned_h, solution_h);
+            // Now solution_h contains h at timestep n+1, previous_solution_h contains h at timestep n
+            // The next iteration (n=n+1) will therefore have solution_h at timestep n and previous_solution_h at timestep n-1
+        }
 
 
-#ifdef TEST_MANUFACTURED_H // Set exact U on manufactured test for H
-        exact_solution_u.set_time(time);
-        VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
-        solution_u = solution_owned_u;
-#else
-        // // Solve for u.
-        assemble_lhs_rhs_u(time);
-        previous_solution_u = solution_u;
-        solve_time_step(lhs_matrix_u, system_rhs_u, solution_owned_u, solution_u);
-        // // Now solution_u contains u at timestep n+1, previous_solution_u contains u at timestep n
-        // // The next iteration (n=n+1) will therefore have solution_u at timestep n and previous_solution_u at timestep n-1
-#endif
+        if constexpr (ENABLE_MANUFACTURED_H) { // Set exact U on manufactured test for H
+            exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            solution_u = solution_owned_u;
+        } else {
+            // // Solve for u.
+            assemble_lhs_rhs_u(time);
+            previous_solution_u = solution_u;
+            solve_time_step(lhs_matrix_u, system_rhs_u, solution_owned_u, solution_u);
+            // // Now solution_u contains u at timestep n+1, previous_solution_u contains u at timestep n
+            // // The next iteration (n=n+1) will therefore have solution_u at timestep n and previous_solution_u at timestep n-1
+        }
 
         // end timing
         auto end = std::chrono::high_resolution_clock::now();
@@ -551,10 +550,10 @@ void Shallow_waters::solve()
         pcout << "Time step computation time: " << ns << " ns" << std::endl;
 
         // Compute the error
-#if defined(TEST_MANUFACTURED_H) || defined(TEST_MANUFACTURED_U)
-        const double error = compute_error(norm_type);
-        pcout << "L2 error: " << error << std::endl;
-#endif
+        if constexpr (ENABLE_MANUFACTURED_H || ENABLE_MANUFACTURED_U){
+            const double error = compute_error(norm_type);
+            pcout << "L2 error: " << error << std::endl;
+        }
     }
 }
 
@@ -565,34 +564,33 @@ Shallow_waters::compute_error(const VectorTools::NormType &norm_type)
     MappingFE        mapping(fe_linear);
 
 
-#if defined(TEST_MANUFACTURED_H)
-    const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
+    if constexpr (ENABLE_MANUFACTURED_H) {
+        const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
 
-    exact_solution_h.set_time(time);
-    Vector<double> error_per_cell;
-    VectorTools::integrate_difference(mapping,
-                                        dof_handler_h,
-                                        solution_h,
-                                        exact_solution_h,
-                                        error_per_cell,
-                                        quadrature_error,
-                                        norm_type);
-    return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
-#elif defined(TEST_MANUFACTURED_U)
-    const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
+        exact_solution_h.set_time(time);
+        Vector<double> error_per_cell;
+        VectorTools::integrate_difference(mapping,
+                                            dof_handler_h,
+                                            solution_h,
+                                            exact_solution_h,
+                                            error_per_cell,
+                                            quadrature_error,
+                                            norm_type);
+        return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
+    } else if constexpr (ENABLE_MANUFACTURED_U) {
+        const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
 
-    exact_solution_u.set_time(time);
-    Vector<double> error_per_cell;
-    VectorTools::integrate_difference(mapping,
-                                        dof_handler_u,
-                                        solution_u,
-                                        exact_solution_u,
-                                        error_per_cell,
-                                        quadrature_error,
-                                        norm_type);
-    return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
-#else
-    return 0.0;
-#endif
-
+        exact_solution_u.set_time(time);
+        Vector<double> error_per_cell;
+        VectorTools::integrate_difference(mapping,
+                                            dof_handler_u,
+                                            solution_u,
+                                            exact_solution_u,
+                                            error_per_cell,
+                                            quadrature_error,
+                                            norm_type);
+        return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
+    } else {
+        return 0.0;
+    }
 }
