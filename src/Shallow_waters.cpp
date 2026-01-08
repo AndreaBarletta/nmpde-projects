@@ -430,7 +430,8 @@ void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
 
     SolverGMRES<TrilinosWrappers::MPI::Vector> solver(solver_control);
 
-    TrilinosWrappers::PreconditionILU preconditioner;
+    TrilinosWrappers::PreconditionSOR preconditioner;
+
     preconditioner.initialize(lhs_matrix);
 
     pcout << "Solving the linear system" << std::endl;

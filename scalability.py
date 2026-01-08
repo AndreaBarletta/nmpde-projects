@@ -40,31 +40,39 @@ def compute_averages_in_directory(directory_path):
 
 
 
-directory_path = 'data/time'
-data = compute_averages_in_directory(directory_path)
+directory_path = 'data/time/'
+data_amg = compute_averages_in_directory(directory_path+'amg')
+data_ilu = compute_averages_in_directory(directory_path+'ilu')
+data_sor = compute_averages_in_directory(directory_path+'sor')
 
 # Plot the results on a log-log scale
-x = sorted(float(k) for k in data.keys())
-y = [data[str(int(k))]/1e9 for k in x]
+x = sorted(float(k) for k in data_amg.keys())
+y_amg = [data_amg[str(int(k))]/1e9 for k in x]
+y_ilu = [data_ilu[str(int(k))]/1e9 for k in x]
+y_sor = [data_sor[str(int(k))]/1e9 for k in x]
 
 plt.figure()
 plt.title("Scalability analysis")
-plt.loglog(x, y, marker='o', linestyle='-', label='Measured average time')
-plt.xlabel("Number of cores")
-plt.ylabel("Average time (s)")
+plt.loglog(x, y_amg, marker='o', linestyle='-', label='Measured average time (AMG preconditioner)')
+plt.loglog(x, y_ilu, marker='o', linestyle='-', label='Measured average time (ILU preconditioner)')
+plt.loglog(x, y_sor, marker='o', linestyle='-', label='Measured average time (SOR preconditioner)')
+plt.xlabel("Number of processes")
+plt.ylabel("Average time per timestep (s)")
 plt.grid(True, which="both")
 
 ax = plt.gca()
 
 # Add reference linear decrease (slope -1 in log-log)
 # y_ref = k / x
-k = y[0] * x[0]  # pass through the first data point
+k = y_sor[0] * x[0]  # pass through the first data point
 y_ref = k / x
 plt.loglog(x, y_ref, linestyle='--', color='red', label='Reference linear decrease')
 
 # Set x-ticks explicitly
 ax.set_xticks(x)
 ax.get_xaxis().set_major_formatter(ticker.FormatStrFormatter('%g'))
+ax.get_yaxis().set_major_formatter(ticker.FormatStrFormatter('%g'))
+ax.get_yaxis().set_minor_formatter(ticker.FormatStrFormatter('%g'))
 
 plt.legend()
 plt.show()
