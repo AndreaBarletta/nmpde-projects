@@ -48,13 +48,13 @@ public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             // Centered Gaussian bump
-            // return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
+            return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
 
             // Offset Gaussian bump
             // return 0.5 + 0.2 * std::exp(-((p[0] - 0.25) * (p[0] - 0.25) + (p[1] - 0.25) * (p[1] - 0.25)) * 500.0);
 
             // Sloping plane
-            return 1.0 - 0.5 * p[0];
+            // return 1.0 - 0.5 * p[0];
 
             // Disappearing dam break
             // return p[0] < 0.5 ? 1.0 : 0.5;

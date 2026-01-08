@@ -7,10 +7,10 @@ int main(int argc, char *argv[])
 
     const unsigned int degree_velocity = 2;
     const unsigned int degree_height = 1;
-    const double T = 1e0;
-    const double deltat = 1e-2;
+    const double T = 2e-2;
+    const double deltat = 1e-3;
 
-    Shallow_waters problem("../mesh/mesh-square-10.msh", degree_velocity, degree_height, T, deltat);
+    Shallow_waters problem("../mesh/mesh-square-50.msh", degree_velocity, degree_height, T, deltat);
 
     problem.setup();
     problem.solve();
