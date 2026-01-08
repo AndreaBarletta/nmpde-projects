@@ -38,6 +38,11 @@ using namespace dealii;
 class Shallow_waters
 {
 public:
+
+    // Activate manufactured solution tests
+    static constexpr bool ENABLE_MANUFACTURED_H = false;
+    static constexpr bool ENABLE_MANUFACTURED_U = false;
+
     // Physical dimension (2D)
     static constexpr unsigned int dim = 2;
 
@@ -125,16 +130,15 @@ public:
     public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
-#ifdef TEST_MANUFACTURED_H
-            const double t = this->get_time();
-            const double x = p[0];
-            const double y = p[1];
+            if constexpr (ENABLE_MANUFACTURED_H) {
+                const double t = this->get_time();
+                const double x = p[0];
+                const double y = p[1];
 
-            return 0.5 * M_PI * (y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) * std::cos(M_PI * y) - std::sin(M_PI * t) * std::cos(M_PI * y) - std::sin(M_PI * x) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x);
-
-#else
-            return 0.0;
-#endif
+                return 0.5 * M_PI * (y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) * std::cos(M_PI * y) - std::sin(M_PI * t) * std::cos(M_PI * y) - std::sin(M_PI * x) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x);
+            } else {
+                return 0.0;
+            }
         }
     };
 
@@ -143,40 +147,40 @@ public:
     public:
         virtual void vector_value(const Point<dim> &p, Vector<double> &values) const override
         {
-#ifdef TEST_MANUFACTURED_U
-            const double t = this->get_time();
-            const double x = p[0];
-            const double y = p[1];
-            const double g = Shallow_waters::g;
-            const double cf = Shallow_waters::cf;
+            if constexpr (ENABLE_MANUFACTURED_U) {
+                const double t = this->get_time();
+                const double x = p[0];
+                const double y = p[1];
+                const double g = Shallow_waters::g;
+                const double cf = Shallow_waters::cf;
 
-            values[0] = (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
-            values[1] = (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+                values[0] = (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+                values[1] = (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
 
-#else
-            values[0] = 0.0;
-            values[1] = 0.0;
-#endif
+            } else {
+                values[0] = 0.0;
+                values[1] = 0.0;
+            }
         }
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
         {
-#ifdef TEST_MANUFACTURED_U
-            const double t = this->get_time();
-            const double x = p[0];
-            const double y = p[1];
-            const double g = Shallow_waters::g;
-            const double cf = Shallow_waters::cf;
+            if constexpr (ENABLE_MANUFACTURED_U) {
+                const double t = this->get_time();
+                const double x = p[0];
+                const double y = p[1];
+                const double g = Shallow_waters::g;
+                const double cf = Shallow_waters::cf;
 
-            if (component == 0) return (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
-            else return (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+                if (component == 0) return (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+                else return (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
 
-#else
-            if (component == 0)
-                return 0.0;
-            else
-                return 0.0;
-#endif
+            } else {
+                if (component == 0)
+                    return 0.0;
+                else
+                    return 0.0;
+            }
         }
     };
 
@@ -198,6 +202,12 @@ public:
           deltat(deltat_),
           mesh(MPI_COMM_WORLD)
     {
+        if constexpr (ENABLE_MANUFACTURED_H) {
+            pcout << "!! Manufactured solution for height ENABLED !!" << std::endl;
+        }
+        if constexpr (ENABLE_MANUFACTURED_U) {
+            pcout << "!! Manufactured solution for velocity ENABLED !!" << std::endl;
+        }
     }
 
     // Initialization.
