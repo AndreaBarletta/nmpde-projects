@@ -1,4 +1,7 @@
 #include "Shallow_waters.hpp"
+#include "Test_Switches.hpp"
+
+using Switches = Test_Switches_Default;
 
 void Shallow_waters::setup()
 {
@@ -112,7 +115,7 @@ void Shallow_waters::setup()
 void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
-    pcout << "  Assembling the lhs and rhs for the height system" << std::endl;
+    pcout << "Assembling the lhs and rhs for the height system" << std::endl;
 
     const unsigned int dofs_per_cell = fe_h->dofs_per_cell;
     const unsigned int n_q = quadrature->size();
@@ -181,14 +184,16 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
             // Same for div u
             const double div_u_interp = 1.5 * div_u_prev[q] - 0.5 * div_u_prevprev[q];
 
-            forcing_term_h.set_time(time);
-            const double f_new_loc =
-                forcing_term_h.value(fe_values_h.quadrature_point(q));
+            // Compute forcing term
+            double f_new_loc = 0.0;
+            double f_old_loc = 0.0;
+            if constexpr (Switches::ENABLE_FORCING_H) {
+                forcing_term_h.set_time(time);
+                f_new_loc = forcing_term_h.value(fe_values_h.quadrature_point(q));
 
-            forcing_term_h.set_time(time - deltat);
-            const double f_old_loc =
-                forcing_term_h.value(fe_values_h.quadrature_point(q));
-
+                forcing_term_h.set_time(time - deltat);
+                f_old_loc = forcing_term_h.value(fe_values_h.quadrature_point(q));
+            }
 
             // Compute SUPG parameter
             double tau1 = std::pow(2.0/deltat,2.0);
@@ -228,8 +233,9 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
                 }
 
                 // Forcing term
-                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * phi_i * fe_values_h.JxW(q);
-
+                if constexpr (Switches::ENABLE_FORCING_H) {
+                    cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * phi_i * fe_values_h.JxW(q);
+                }
                 // SUPG RHS term
                 cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * SUPGtau * Lss * fe_values_h.JxW(q);
             }
@@ -261,7 +267,7 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 void Shallow_waters::assemble_lhs_rhs_u(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
-    pcout << "  Assembling the lhs and rhs for the velocity system" << std::endl;
+    pcout << "Assembling the lhs and rhs for the velocity system" << std::endl;
 
     const unsigned int dofs_per_cell = fe_u->dofs_per_cell;
     const unsigned int n_q = quadrature->size();
@@ -330,21 +336,23 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
                 u_interp[d] = 1.5 * u_prev[q][d] - 0.5 * u_prevprev[q][d];
 
             // Compute forcing term
-            forcing_term_u.set_time(time);
-            Vector<double> f_new_loc(dim);
-                forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_new_loc);
-
-            forcing_term_u.set_time(time - deltat);
-            Vector<double> f_old_loc(dim);
-            forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_old_loc);
-
-            // Convert to Tensor for easier computation
             Tensor<1, dim> f_new_loc_tensor;
             Tensor<1, dim> f_old_loc_tensor;
-            for (unsigned int d = 0; d < dim; ++d)
-            {
-                f_new_loc_tensor[d] = f_new_loc[d];
-                f_old_loc_tensor[d] = f_old_loc[d];
+            if constexpr (Switches::ENABLE_FORCING_U) {
+                forcing_term_u.set_time(time);
+                Vector<double> f_new_loc(dim);
+                    forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_new_loc);
+
+                forcing_term_u.set_time(time - deltat);
+                Vector<double> f_old_loc(dim);
+                forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_old_loc);
+
+                // Convert to Tensor for easier computation
+                for (unsigned int d = 0; d < dim; ++d)
+                {
+                    f_new_loc_tensor[d] = f_new_loc[d];
+                    f_old_loc_tensor[d] = f_old_loc[d];
+                }
             }
                 
             //  i is the test function, j is the solution function
@@ -374,7 +382,9 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
                 cell_rhs(i) += g * (theta * h_curr[q] + (1.0 - theta) * h_prev[q]) * fe_values_u[displacement].divergence(i,q) * fe_values_u.JxW(q);
 
                  // Forcing term
-                cell_rhs(i) += (theta * f_new_loc_tensor + (1.0 - theta) * f_old_loc_tensor) * phi_i * fe_values_u.JxW(q);
+                if constexpr (Switches::ENABLE_FORCING_U) {
+                    cell_rhs(i) += (theta * f_new_loc_tensor + (1.0 - theta) * f_old_loc_tensor) * phi_i * fe_values_u.JxW(q);
+                }
             }
         }
 
@@ -468,29 +478,29 @@ void Shallow_waters::output(const unsigned int &time_step) const
 void Shallow_waters::solve()
 {
     pcout << "===============================================" << std::endl;
-    const auto norm_type = VectorTools::L2_norm;
-
     time = 0.0;
 
     // Apply the initial condition.
     {
         pcout << "Applying the initial condition" << std::endl;
 
-        if constexpr (ENABLE_MANUFACTURED_H || ENABLE_MANUFACTURED_U) { // On manufactured solutions, set initial condition to exact solution
+        if constexpr (Switches::ENABLE_EXACT_INIT_H) {
             exact_solution_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
-            solution_h = solution_owned_h;
-            exact_solution_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
-            solution_u = solution_owned_u;
         } else {
             initial_conditions_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
-            solution_h = solution_owned_h;
+        }
+        solution_h = solution_owned_h;
+
+        if constexpr (Switches::ENABLE_EXACT_INIT_U) {
+            exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+        } else {
             initial_conditions_u.set_time(time);
             VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
-            solution_u = solution_owned_u;
         }
+        solution_u = solution_owned_u;
 
         // Output the initial solution.
         output(0);
@@ -513,7 +523,7 @@ void Shallow_waters::solve()
         // start timing
         auto start = std::chrono::high_resolution_clock::now();
 
-        if constexpr (ENABLE_MANUFACTURED_U) { // Set exact H on manufactured test for U
+        if constexpr (Switches::ENABLE_EXACT_H) { // Set exact H on conv test for ONLY U
             exact_solution_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
             solution_h = solution_owned_h;
@@ -527,7 +537,7 @@ void Shallow_waters::solve()
         }
 
 
-        if constexpr (ENABLE_MANUFACTURED_H) { // Set exact U on manufactured test for H
+        if constexpr (Switches::ENABLE_EXACT_U) { // Set exact U on conv test for ONLY H
             exact_solution_u.set_time(time);
             VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
             solution_u = solution_owned_u;
@@ -550,47 +560,56 @@ void Shallow_waters::solve()
         pcout << "Time step computation time: " << ns << " ns" << std::endl;
 
         // Compute the error
-        if constexpr (ENABLE_MANUFACTURED_H || ENABLE_MANUFACTURED_U){
-            const double error = compute_error(norm_type);
-            pcout << "L2 error: " << error << std::endl;
+        if constexpr (Switches::ENABLE_OUT_ERR_H || Switches::ENABLE_OUT_ERR_U) {
+            // Set the norm type
+            const auto norm_type = VectorTools::L2_norm;
+            
+            if constexpr (Switches::ENABLE_OUT_ERR_H){
+                const double error = compute_h_error(norm_type);
+                pcout << "H - L2 error: " << error << std::endl;
+            }
+            if constexpr (Switches::ENABLE_OUT_ERR_U){
+                const double error = compute_u_error(norm_type);
+                pcout << "U - L2 error: " << error << std::endl;
+            }
         }
     }
 }
 
-double
-Shallow_waters::compute_error(const VectorTools::NormType &norm_type)
+double Shallow_waters::compute_h_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
 
+    const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
 
-    if constexpr (ENABLE_MANUFACTURED_H) {
-        const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
+    exact_solution_h.set_time(time);
+    Vector<double> error_per_cell;
+    VectorTools::integrate_difference(mapping,
+                                        dof_handler_h,
+                                        solution_h,
+                                        exact_solution_h,
+                                        error_per_cell,
+                                        quadrature_error,
+                                        norm_type);
+    return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
+}
 
-        exact_solution_h.set_time(time);
-        Vector<double> error_per_cell;
-        VectorTools::integrate_difference(mapping,
-                                            dof_handler_h,
-                                            solution_h,
-                                            exact_solution_h,
-                                            error_per_cell,
-                                            quadrature_error,
-                                            norm_type);
-        return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
-    } else if constexpr (ENABLE_MANUFACTURED_U) {
-        const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
+double Shallow_waters::compute_u_error(const VectorTools::NormType &norm_type)
+{
+    FE_SimplexP<dim> fe_linear(1);
+    MappingFE        mapping(fe_linear);
 
-        exact_solution_u.set_time(time);
-        Vector<double> error_per_cell;
-        VectorTools::integrate_difference(mapping,
-                                            dof_handler_u,
-                                            solution_u,
-                                            exact_solution_u,
-                                            error_per_cell,
-                                            quadrature_error,
-                                            norm_type);
-        return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
-    } else {
-        return 0.0;
-    }
+    const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
+
+    exact_solution_u.set_time(time);
+    Vector<double> error_per_cell;
+    VectorTools::integrate_difference(mapping,
+                                        dof_handler_u,
+                                        solution_u,
+                                        exact_solution_u,
+                                        error_per_cell,
+                                        quadrature_error,
+                                        norm_type);
+    return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
 }
