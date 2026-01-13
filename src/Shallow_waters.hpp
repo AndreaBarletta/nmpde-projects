@@ -34,7 +34,7 @@
 
 using namespace dealii;
 
-// Class representing the non-linear diffusion problem.
+// Class representing the shallow waters problem.
 class Shallow_waters
 {
 public:
@@ -49,16 +49,19 @@ public:
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             // Centered Gaussian bump
-            return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
+            // return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
 
             // Offset Gaussian bump
             // return 0.5 + 0.2 * std::exp(-((p[0] - 0.25) * (p[0] - 0.25) + (p[1] - 0.25) * (p[1] - 0.25)) * 500.0);
 
             // Sloping plane
-            // return 1.0 - 0.5 * p[0];
+            return 1.0 - 0.3 * p[0];
 
             // Disappearing dam break
             // return p[0] < 0.5 ? 1.0 : 0.5;
+
+            // Still water
+            // return 1.0;
         }
     };
 
@@ -90,7 +93,7 @@ public:
             const double x = p[0];
             const double y = p[1];
 
-            return  0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0;
+            return x * y * std::cos(M_PI * t) + 1.0;
         }
     };
 
@@ -117,6 +120,7 @@ public:
                 return y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y);
             else
                 return std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t);
+
         }
     };
 
@@ -130,7 +134,7 @@ public:
             const double x = p[0];
             const double y = p[1];
 
-            return 0.5 * M_PI * (y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) * std::cos(M_PI * y) - std::sin(M_PI * t) * std::cos(M_PI * y) - std::sin(M_PI * x) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x);
+            return -M_PI * x * y * std::sin(M_PI * t) + x * std::sin(M_PI * x) * std::sin(M_PI * y) * std::pow(std::cos(M_PI * t), 2) + std::pow(y, 2) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) + M_PI * (x * y * std::cos(M_PI * t) + 1) * (y * std::sin(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y));
         }
     };
 
@@ -145,8 +149,8 @@ public:
             const double g = Shallow_waters::g;
             const double cf = Shallow_waters::cf;
 
-            values[0] = (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
-            values[1] = (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+            values[0] = cf * y * std::sqrt(std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::sin(M_PI * x), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * x), 2) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y)/(x * y * std::cos(M_PI * t) + 1) + g * y * std::cos(M_PI * t) + M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) + (-1.0/2.0 * M_PI * y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin((1.0/2.0) * M_PI * y) + std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t);
+            values[1] = cf * std::sqrt(std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::sin(M_PI * x), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * x), 2) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t)/(x * y * std::cos(M_PI * t) + 1) + g * x * std::cos(M_PI * t) + M_PI * y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - M_PI * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin(M_PI * y) + M_PI * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y);
         }
 
         virtual double value(const Point<dim> &p, const unsigned int component = 0) const override
@@ -157,8 +161,10 @@ public:
             const double g = Shallow_waters::g;
             const double cf = Shallow_waters::cf;
 
-            if (component == 0) return (1.0/2.0) * (2 * cf * y * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) + (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (1.0 * M_PI * g * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos(M_PI * y) + 2 * M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + 2 * M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) - (M_PI * y * std::sin((1.0/2.0) * M_PI * y) - 2 * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * t) * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::cos(M_PI * t)))/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
-            else return (cf * std::sqrt((std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::pow(std::sin(M_PI * x), 2)) * std::cos(M_PI * t) + M_PI * (0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0) * (-0.5 * g * std::cos(M_PI * t) + y * std::sin(M_PI * t) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - std::sin(M_PI * t) + std::sin(M_PI * x) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y))) * std::sin(M_PI * x) * std::sin(M_PI * y)/(0.5 * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos(M_PI * y) + 1.0);
+            if (component == 0)
+                return cf * y * std::sqrt(std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::sin(M_PI * x), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * x), 2) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y)/(x * y * std::cos(M_PI * t) + 1) + g * y * std::cos(M_PI * t) + M_PI * std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::sin(M_PI * x) * std::cos(M_PI * x) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + M_PI * y * std::sin(M_PI * x) * std::cos(M_PI * t) * std::cos((1.0/2.0) * M_PI * y) + (-1.0/2.0 * M_PI * y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin((1.0/2.0) * M_PI * y) + std::sin(M_PI * t) * std::sin(M_PI * x) * std::cos((1.0/2.0) * M_PI * y)) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t);
+            else
+                return cf * std::sqrt(std::pow(y, 2) * std::pow(std::sin(M_PI * t), 2) * std::pow(std::sin(M_PI * x), 2) * std::pow(std::cos((1.0/2.0) * M_PI * y), 2) + std::pow(std::sin(M_PI * x), 2) * std::pow(std::sin(M_PI * y), 2) * std::pow(std::cos(M_PI * t), 2)) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t)/(x * y * std::cos(M_PI * t) + 1) + g * x * std::cos(M_PI * t) + M_PI * y * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin(M_PI * y) * std::cos(M_PI * t) * std::cos(M_PI * x) * std::cos((1.0/2.0) * M_PI * y) - M_PI * std::sin(M_PI * t) * std::sin(M_PI * x) * std::sin(M_PI * y) + M_PI * std::pow(std::sin(M_PI * x), 2) * std::sin(M_PI * y) * std::pow(std::cos(M_PI * t), 2) * std::cos(M_PI * y);   
         }
     };
 
@@ -231,10 +237,10 @@ protected:
     const double T;
 
     // Gravitational acceleration
-    static constexpr double g = 9.81e-1;
+    static constexpr double g = 2.5e-4;
 
     // Chézy’s friction coefficient
-    static constexpr const double cf = 3.0e0;
+    static constexpr const double cf = 1e-2;
 
     // Initial conditions
     InitialConditions_h initial_conditions_h;

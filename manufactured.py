@@ -16,13 +16,15 @@ def manufactured_H():
     u = y * sp.sin(sp.pi * t) * sp.sin(sp.pi * x) * sp.cos(sp.pi/2 * y)
     v = sp.cos(sp.pi * t) * sp.sin(sp.pi * x) * sp.sin(sp.pi * y)
 
-    H = 1 + 0.5 * sp.sin(sp.pi * x) * sp.cos(sp.pi * y) * sp.cos(sp.pi * t)
+    H = 1 + x * y * sp.cos(sp.pi * t)
 
-    H_t = sp.diff(H, t)
-    H_x = sp.diff(H, x)
-    H_y = sp.diff(H, y)
+    dtH = sp.diff(H, t)
+    dxH = sp.diff(H, x)
+    dyH = sp.diff(H, y)
+    dxU = sp.diff(u, x)
+    dyV = sp.diff(v, y)
 
-    S_H = +H_t + u*H_x + v*H_y
+    S_H = +dtH + u*dxH + v*dyH + H * (dxU + dyV)
     S_H = sp.simplify(S_H)
 
     print("Velocity field u(x,y):", export_expression(u))
@@ -36,7 +38,7 @@ def manufactured_U():
     u = y * sp.sin(sp.pi * t) * sp.sin(sp.pi * x) * sp.cos(sp.pi/2 * y)
     v = sp.cos(sp.pi * t) * sp.sin(sp.pi * x) * sp.sin(sp.pi * y)
 
-    H = 1 + 0.5 * sp.sin(sp.pi * x) * sp.cos(sp.pi * y) * sp.cos(sp.pi * t)
+    H = 1 + x * y * sp.cos(sp.pi * t)
 
     u_x = sp.diff(u,x)
     u_y = sp.diff(u,y)
@@ -54,8 +56,8 @@ def manufactured_U():
     S_u = u_t + u * u_x + v * u_y + g * H_x + cf/H * U_norm * u
     S_v = v_t + u * v_x + v * v_y + g * H_y + cf/H * U_norm * v
 
-    S_u = sp.simplify(S_u)
-    S_v = sp.simplify(S_v)
+    # S_u = sp.simplify(S_u)
+    # S_v = sp.simplify(S_v)
 
     print("Height H(x,y):", export_expression(H))
     print("Manufactured velocity field u(x,y,t):", export_expression(u))

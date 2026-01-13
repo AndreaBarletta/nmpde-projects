@@ -1,5 +1,5 @@
 L = 1.0; // Square side.
-h = 0.25; // Mesh size.
+h = 0.01; // Mesh size.
 
 // Create one point in the origin.
 Point(1) = {0, 0, 0, h};

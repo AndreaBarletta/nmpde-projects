@@ -1,7 +1,7 @@
 #include "Shallow_waters.hpp"
 #include "Test_Switches.hpp"
 
-using Switches = Test_Switches_Default;
+using Switches = Test_Convergence_H;
 
 void Shallow_waters::setup()
 {
@@ -235,9 +235,10 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
                 // Forcing term
                 if constexpr (Switches::ENABLE_FORCING_H) {
                     cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * phi_i * fe_values_h.JxW(q);
+
+                    // SUPG RHS term
+                    cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * SUPGtau * Lss * fe_values_h.JxW(q);
                 }
-                // SUPG RHS term
-                cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * SUPGtau * Lss * fe_values_h.JxW(q);
             }
         }
 
@@ -262,6 +263,25 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
 
     // Assemble rhs vector
     rhs_matrix_h.vmult_add(system_rhs_h, solution_owned_h);
+
+    if constexpr(Switches::ENABLE_FORCING_H){
+        // Boundary conditions needed for manufactured solution tests
+       {
+           std::map<types::global_dof_index, double> boundary_values;
+           std::map<types::boundary_id, const Function<dim> *> boundary_functions;
+   
+           exact_solution_h.set_time(time);
+           for (unsigned int i = 0; i < 4; ++i)
+               boundary_functions[i] = &exact_solution_h;
+   
+           VectorTools::interpolate_boundary_values(dof_handler_h,
+                                                    boundary_functions,
+                                                    boundary_values);
+   
+           MatrixTools::apply_boundary_values(
+               boundary_values, lhs_matrix_h, solution_owned_h, system_rhs_h, false);
+       }
+    }
 }
 
 void Shallow_waters::assemble_lhs_rhs_u(const double &time)
@@ -298,7 +318,7 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
     auto cell_h = dof_handler_h.begin_active();
     auto cell_u = dof_handler_u.begin_active();
 
-    const auto endc = dof_handler_h.end();
+    const auto endc = dof_handler_u.end();
 
     for (; cell_u != endc; ++cell_u, ++cell_h)
     {
@@ -487,6 +507,9 @@ void Shallow_waters::solve()
         if constexpr (Switches::ENABLE_EXACT_INIT_H) {
             exact_solution_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            previous_solution_h = solution_owned_h;
+            exact_solution_h.set_time(time+deltat);
+            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
         } else {
             initial_conditions_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
@@ -495,6 +518,9 @@ void Shallow_waters::solve()
 
         if constexpr (Switches::ENABLE_EXACT_INIT_U) {
             exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            previous_solution_u = solution_owned_u;
+            exact_solution_u.set_time(time+deltat);
             VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
         } else {
             initial_conditions_u.set_time(time);
@@ -505,11 +531,12 @@ void Shallow_waters::solve()
         // Output the initial solution.
         output(0);
 
-        previous_solution_h = solution_h;
-        previous_solution_u = solution_u;
+        // previous_solution_h = solution_h;
+        // previous_solution_u = solution_u;
     }
 
     unsigned int time_step = 0.0;
+    time+=deltat;
 
     while (time < T - 0.5 * deltat)
     {
@@ -524,6 +551,7 @@ void Shallow_waters::solve()
         auto start = std::chrono::high_resolution_clock::now();
 
         if constexpr (Switches::ENABLE_EXACT_H) { // Set exact H on conv test for ONLY U
+            previous_solution_h = solution_h;
             exact_solution_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
             solution_h = solution_owned_h;
@@ -538,6 +566,7 @@ void Shallow_waters::solve()
 
 
         if constexpr (Switches::ENABLE_EXACT_U) { // Set exact U on conv test for ONLY H
+            previous_solution_u = solution_u;
             exact_solution_u.set_time(time);
             VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
             solution_u = solution_owned_u;
