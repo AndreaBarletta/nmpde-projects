@@ -1,23 +1,102 @@
-### Organizing the source code
-Please place all your sources into the `src` folder.
+# Finite Element Solver for the Shallow Water Equations (deal.II)
 
-Binary files must not be uploaded to the repository (including executables).
+This repository contains a finite element solver for
+the **Shallow Water Equations (SWE)** implemented using the **deal.II**
+finite element library.\
+The software is designed with a dual focus on **numerical robustness**
+and **parallel scalability**.
 
-Mesh files should not be uploaded to the repository. If applicable, upload `gmsh` scripts with suitable instructions to generate the meshes (and ideally a Makefile that runs those instructions). If not applicable, consider uploading the meshes to a different file sharing service, and providing a download link as part of the building and running instructions.
+------------------------------------------------------------------------
 
-### Compiling
-To build the executable, make sure you have loaded the needed modules with
-```bash
-$ module load gcc-glibc dealii
+## Overview
+
+The shallow water equations model fluid flows where the horizontal
+length scales dominate the vertical depth. They are widely used in
+oceanography, hydraulics, geophysics, and atmospheric sciences.
+
+------------------------------------------------------------------------
+
+## Repository Structure
+
+    .
+    ├── src/                 # C++ source code of the solver
+    ├── convergence.py      # Script for convergence plots
+    ├── manufacture.py      # Manufactured solution and error computation
+    ├── CMakeLists.txt      # Build configuration
+    └── README.md
+
+------------------------------------------------------------------------
+
+## Parallelization
+
+The solver is implemented using deal.II's distributed parallel
+infrastructure:
+
+-   `parallel::distributed::Triangulation`
+-   MPI communication
+-   Trilinos linear algebra backends
+
+------------------------------------------------------------------------
+
+## Dependencies
+
+-   deal.II (compiled with MPI support)
+-   CMake ≥ 3.16
+-   MPI (OpenMPI or MPICH)
+-   C++17 compatible compiler
+-   Python 3 with `numpy` and `matplotlib` (optional)
+
+------------------------------------------------------------------------
+
+## Building the Code
+
+From the project root:
+
+``` bash
+mkdir build
+cd build
+cmake ..
+make -j
 ```
-Then run the following commands:
-```bash
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
+
+------------------------------------------------------------------------
+
+## Running the Solver
+
+Run in serial:
+
+``` bash
+./shallow_waters <T> <deltat> <mesh_file_name>
 ```
-The executable will be created into `build`, and can be executed through
-```bash
-$ ./executable-name
+
+Run in parallel:
+
+``` bash
+mpirun -np 4 ./shallow_waters <T> <deltat> <mesh_file_name>
 ```
+
+------------------------------------------------------------------------
+
+## Manufactured Solutions
+
+The script `manufacture.py` implements a **method of manufactured
+solutions (MMS)** workflow:
+
+-   An analytic solution is defined
+-   Corresponding forcing terms are computed
+
+Run with:
+
+``` bash
+python manufacture.py
+```
+
+------------------------------------------------------------------------
+
+## Example Outputs
+
+Below is an example of simulation result.
+
+### Gaussian bumb
+
+![Free surface](gifs/gauss_bump.gif)
