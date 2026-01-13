@@ -97,6 +97,6 @@ python manufacture.py
 
 Below is an example of simulation result.
 
-### Gaussian bumb
+### Gaussian bump
 
 ![Free surface](gifs/gauss_bump.gif)
