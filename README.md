@@ -93,6 +93,11 @@ python manufacture.py
 
 ------------------------------------------------------------------------
 
+## Mesh Generation with Gmsh
+The repository includes a geometry definition file mesh/mesh_script.geo that can be used to generate computational meshes using [GMSH](https://gmsh.info/)
+
+------------------------------------------------------------------------
+
 ## Example Outputs
 
 Below is an example of simulation result.
