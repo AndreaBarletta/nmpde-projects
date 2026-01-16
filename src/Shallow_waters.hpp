@@ -37,7 +37,7 @@
 using namespace dealii;
 
 // Class representing the shallow waters problem.
-template<template<unsigned int, template<unsigned int> typename> class PCase, template<unsigned int> typename TSettings>
+template<template<unsigned int> class PCase>
 class Shallow_waters
 {
 public:
@@ -240,8 +240,8 @@ protected:
     const double T;
 
     // Problem specifications.
-    using P_S = PCase<dim, TSettings>;
-    P_S p_specs;
+    using P_C = PCase<dim>;
+    P_C p_case;
 
     // Discretization. ///////////////////////////////////////////////////////////
 

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     const double deltat = std::stod(argv[2]);
     const std::string mesh_file_name = argv[3];
 
-    Shallow_waters<Problem_Case, Test_Settings> problem(mesh_file_name, degree_velocity, degree_height, T, deltat);
+    Shallow_waters<Problem_Case> problem(mesh_file_name, degree_velocity, degree_height, T, deltat);
 
     problem.setup();
     problem.solve();
