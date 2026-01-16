@@ -1,13 +1,8 @@
 #ifndef SHALLOW_WATERS_IMPL_HPP
 #define SHALLOW_WATERS_IMPL_HPP
 
-#include "Shallow_waters.hpp"
-#include "Test_Switches.hpp"
-
-using Switches = Test_Convergence_H;
-
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::setup()
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::setup()
 {
     pcout << "===============================================" << std::endl;
 
@@ -116,8 +111,8 @@ void Shallow_waters<Specs>::setup()
     }
 }
 
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_h(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the height system" << std::endl;
@@ -192,8 +187,8 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
             // Compute forcing term
             double f_new_loc = 0.0;
             double f_old_loc = 0.0;
-            if constexpr (Switches::ENABLE_FORCING_H) {
-                auto forcing_h = problem_specs.forcing_term_h;
+            if constexpr (P_S::T_S::ENABLE_FORCING_H) {
+                auto forcing_h = p_specs.t_settings.forcing_term_h;
 
                 forcing_h.set_time(time);
                 f_new_loc = forcing_h.value(fe_values_h.quadrature_point(q));
@@ -240,7 +235,7 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
                 }
 
                 // Forcing term
-                if constexpr (Switches::ENABLE_FORCING_H) {
+                if constexpr (P_S::T_S::ENABLE_FORCING_H) {
                     cell_rhs(i) += (theta * f_new_loc + (1.0 - theta) * f_old_loc) * phi_i * fe_values_h.JxW(q);
 
                     // SUPG RHS term
@@ -271,15 +266,15 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
     // Assemble rhs vector
     rhs_matrix_h.vmult_add(system_rhs_h, solution_owned_h);
 
-    if constexpr(Switches::ENABLE_FORCING_H){
+    if constexpr(P_S::T_S::ENABLE_FORCING_H){
         // Boundary conditions needed for manufactured solution tests
        {
            std::map<types::global_dof_index, double> boundary_values;
            std::map<types::boundary_id, const Function<dim> *> boundary_functions;
    
-           problem_specs.exact_solution_h.set_time(time);
+           p_specs.t_settings.exact_solution_h.set_time(time);
            for (unsigned int i = 0; i < 4; ++i)
-               boundary_functions[i] = &problem_specs.exact_solution_h;
+               boundary_functions[i] = &p_specs.t_settings.exact_solution_h;
    
            VectorTools::interpolate_boundary_values(dof_handler_h,
                                                     boundary_functions,
@@ -291,8 +286,8 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
     }
 }
 
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::assemble_lhs_rhs_u(const double &time)
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_u(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the velocity system" << std::endl;
@@ -366,8 +361,8 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_u(const double &time)
             // Compute forcing term
             Tensor<1, dim> f_new_loc_tensor;
             Tensor<1, dim> f_old_loc_tensor;
-            if constexpr (Switches::ENABLE_FORCING_U) {
-                auto forcing_u = problem_specs.forcing_term_u;
+            if constexpr (P_S::T_S::ENABLE_FORCING_U) {
+                auto forcing_u = p_specs.t_settings.forcing_term_u;
 
                 forcing_u.set_time(time);
                 Vector<double> f_new_loc(dim);
@@ -404,14 +399,14 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_u(const double &time)
                     cell_stiffness_matrix(i, j) += u_interp * grad_phi_i * phi_j * fe_values_u.JxW(q);
                     
                     // Friction term cf/a ||u|| u
-                    cell_stiffness_matrix(i, j) += cf / (h_curr[q]) * u_interp.norm() * phi_i * phi_j * fe_values_u.JxW(q);
+                    cell_stiffness_matrix(i, j) += p_specs.cf / (h_curr[q]) * u_interp.norm() * phi_i * phi_j * fe_values_u.JxW(q);
                 }
 
                 // g grad H term
-                cell_rhs(i) += g * (theta * h_curr[q] + (1.0 - theta) * h_prev[q]) * fe_values_u[displacement].divergence(i,q) * fe_values_u.JxW(q);
+                cell_rhs(i) += p_specs.g * (theta * h_curr[q] + (1.0 - theta) * h_prev[q]) * fe_values_u[displacement].divergence(i,q) * fe_values_u.JxW(q);
 
                  // Forcing term
-                if constexpr (Switches::ENABLE_FORCING_U) {
+                if constexpr (P_S::T_S::ENABLE_FORCING_U) {
                     cell_rhs(i) += (theta * f_new_loc_tensor + (1.0 - theta) * f_old_loc_tensor) * phi_i * fe_values_u.JxW(q);
                 }
             }
@@ -457,8 +452,8 @@ void Shallow_waters<Specs>::assemble_lhs_rhs_u(const double &time)
     }
 }
 
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
                                      TrilinosWrappers::MPI::Vector &system_rhs,
                                      TrilinosWrappers::MPI::Vector &solution_owned,
                                      TrilinosWrappers::MPI::Vector &solution)
@@ -481,8 +476,8 @@ void Shallow_waters<Specs>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_
     solution = solution_owned;
 }
 
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::output(const unsigned int &time_step) const
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::output(const unsigned int &time_step) const
 {
     DataOut<dim> data_out;
 
@@ -505,8 +500,8 @@ void Shallow_waters<Specs>::output(const unsigned int &time_step) const
         "./vtk/", "output", time_step, MPI_COMM_WORLD, 3);
 }
 
-template<template<unsigned int> class Specs>
-void Shallow_waters<Specs>::solve()
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+void Shallow_waters<Specs, TSettings>::solve()
 {
     pcout << "===============================================" << std::endl;
     time = 0.0;
@@ -515,8 +510,8 @@ void Shallow_waters<Specs>::solve()
     {
         pcout << "Applying the initial condition" << std::endl;
 
-        if constexpr (Switches::ENABLE_EXACT_INIT_H) {
-            auto exact_h = problem_specs.exact_solution_h;
+        if constexpr (P_S::T_S::ENABLE_EXACT_INIT_H) {
+            auto exact_h = p_specs.t_settings.exact_solution_h;
 
             exact_h.set_time(time);
             VectorTools::interpolate(dof_handler_h, exact_h, solution_owned_h);
@@ -524,13 +519,13 @@ void Shallow_waters<Specs>::solve()
             exact_h.set_time(time+deltat);
             VectorTools::interpolate(dof_handler_h, exact_h, solution_owned_h);
         } else {
-            problem_specs.initial_conditions_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, problem_specs.initial_conditions_h, solution_owned_h);
+            p_specs.initial_conditions_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, p_specs.initial_conditions_h, solution_owned_h);
         }
         solution_h = solution_owned_h;
 
-        if constexpr (Switches::ENABLE_EXACT_INIT_U) {
-            auto exact_u = problem_specs.exact_solution_u;
+        if constexpr (P_S::T_S::ENABLE_EXACT_INIT_U) {
+            auto exact_u = p_specs.t_settings.exact_solution_u;
             
             exact_u.set_time(time);
             VectorTools::interpolate(dof_handler_u, exact_u, solution_owned_u);
@@ -538,8 +533,8 @@ void Shallow_waters<Specs>::solve()
             exact_u.set_time(time+deltat);
             VectorTools::interpolate(dof_handler_u, exact_u, solution_owned_u);
         } else {
-            problem_specs.initial_conditions_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, problem_specs.initial_conditions_u, solution_owned_u);
+            p_specs.initial_conditions_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, p_specs.initial_conditions_u, solution_owned_u);
         }
         solution_u = solution_owned_u;
 
@@ -562,10 +557,10 @@ void Shallow_waters<Specs>::solve()
         // start timing
         auto start = std::chrono::high_resolution_clock::now();
 
-        if constexpr (Switches::ENABLE_EXACT_H) { // Set exact H on conv test for ONLY U
+        if constexpr (P_S::T_S::ENABLE_EXACT_H) { // Set exact H on conv test for ONLY U
             previous_solution_h = solution_h;
-            problem_specs.exact_solution_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, problem_specs.exact_solution_h, solution_owned_h);
+            p_specs.t_settings.exact_solution_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, p_specs.t_settings.exact_solution_h, solution_owned_h);
             solution_h = solution_owned_h;
         } else {
             // Solve for h.
@@ -577,10 +572,10 @@ void Shallow_waters<Specs>::solve()
         }
 
 
-        if constexpr (Switches::ENABLE_EXACT_U) { // Set exact U on conv test for ONLY H
+        if constexpr (P_S::T_S::ENABLE_EXACT_U) { // Set exact U on conv test for ONLY H
             previous_solution_u = solution_u;
-            problem_specs.exact_solution_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, problem_specs.exact_solution_u, solution_owned_u);
+            p_specs.t_settings.exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, p_specs.t_settings.exact_solution_u, solution_owned_u);
             solution_u = solution_owned_u;
         } else {
             // // Solve for u.
@@ -601,15 +596,15 @@ void Shallow_waters<Specs>::solve()
         pcout << "Time step computation time: " << ns << " ns" << std::endl;
 
         // Compute the error
-        if constexpr (Switches::ENABLE_OUT_ERR_H || Switches::ENABLE_OUT_ERR_U) {
+        if constexpr (P_S::T_S::ENABLE_OUT_ERR_H || P_S::T_S::ENABLE_OUT_ERR_U) {
             // Set the norm type
             const auto norm_type = VectorTools::L2_norm;
             
-            if constexpr (Switches::ENABLE_OUT_ERR_H){
+            if constexpr (P_S::T_S::ENABLE_OUT_ERR_H){
                 const double error = compute_h_error(norm_type);
                 pcout << "H - L2 error: " << error << std::endl;
             }
-            if constexpr (Switches::ENABLE_OUT_ERR_U){
+            if constexpr (P_S::T_S::ENABLE_OUT_ERR_U){
                 const double error = compute_u_error(norm_type);
                 pcout << "U - L2 error: " << error << std::endl;
             }
@@ -617,40 +612,40 @@ void Shallow_waters<Specs>::solve()
     }
 }
 
-template<template<unsigned int> class Specs>
-double Shallow_waters<Specs>::compute_h_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+double Shallow_waters<Specs, TSettings>::compute_h_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
 
-    problem_specs.exact_solution_h.set_time(time);
+    p_specs.t_settings.exact_solution_h.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_h,
                                         solution_h,
-                                        problem_specs.exact_solution_h,
+                                        p_specs.t_settings.exact_solution_h,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);
     return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
 }
 
-template<template<unsigned int> class Specs>
-double Shallow_waters<Specs>::compute_u_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
+double Shallow_waters<Specs, TSettings>::compute_u_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
 
-    problem_specs.exact_solution_u.set_time(time);
+    p_specs.t_settings.exact_solution_u.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_u,
                                         solution_u,
-                                        problem_specs.exact_solution_u,
+                                        p_specs.t_settings.exact_solution_u,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);
