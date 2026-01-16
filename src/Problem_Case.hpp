@@ -1,11 +1,11 @@
-#ifndef PROBLEM_SPECS_HPP
-#define PROBLEM_SPECS_HPP
+#ifndef PROBLEM_CASE_HPP
+#define PROBLEM_CASE_HPP
 
 #include "Functions.hpp"
 #include "Test_Settings.hpp"
 
 template <unsigned int dim, template<unsigned int> typename Test_Settings>
-struct Problem_Specs
+struct Problem_Case
 {
     // Gravitational acceleration
     static constexpr double g = 2.5e-4;

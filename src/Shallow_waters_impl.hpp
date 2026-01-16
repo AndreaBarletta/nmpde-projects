@@ -1,8 +1,8 @@
 #ifndef SHALLOW_WATERS_IMPL_HPP
 #define SHALLOW_WATERS_IMPL_HPP
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::setup()
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::setup()
 {
     pcout << "===============================================" << std::endl;
 
@@ -111,8 +111,8 @@ void Shallow_waters<Specs, TSettings>::setup()
     }
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_h(const double &time)
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::assemble_lhs_rhs_h(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the height system" << std::endl;
@@ -286,8 +286,8 @@ void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_h(const double &time)
     }
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_u(const double &time)
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::assemble_lhs_rhs_u(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the velocity system" << std::endl;
@@ -452,8 +452,8 @@ void Shallow_waters<Specs, TSettings>::assemble_lhs_rhs_u(const double &time)
     }
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
                                      TrilinosWrappers::MPI::Vector &system_rhs,
                                      TrilinosWrappers::MPI::Vector &solution_owned,
                                      TrilinosWrappers::MPI::Vector &solution)
@@ -476,8 +476,8 @@ void Shallow_waters<Specs, TSettings>::solve_time_step(TrilinosWrappers::SparseM
     solution = solution_owned;
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::output(const unsigned int &time_step) const
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::output(const unsigned int &time_step) const
 {
     DataOut<dim> data_out;
 
@@ -500,8 +500,8 @@ void Shallow_waters<Specs, TSettings>::output(const unsigned int &time_step) con
         "./vtk/", "output", time_step, MPI_COMM_WORLD, 3);
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-void Shallow_waters<Specs, TSettings>::solve()
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+void Shallow_waters<Case, TSettings>::solve()
 {
     pcout << "===============================================" << std::endl;
     time = 0.0;
@@ -612,8 +612,8 @@ void Shallow_waters<Specs, TSettings>::solve()
     }
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-double Shallow_waters<Specs, TSettings>::compute_h_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+double Shallow_waters<Case, TSettings>::compute_h_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
@@ -632,8 +632,8 @@ double Shallow_waters<Specs, TSettings>::compute_h_error(const VectorTools::Norm
     return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
 }
 
-template<template<unsigned int, template<unsigned int> typename> class Specs, template<unsigned int> typename TSettings>
-double Shallow_waters<Specs, TSettings>::compute_u_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int, template<unsigned int> typename> class Case, template<unsigned int> typename TSettings>
+double Shallow_waters<Case, TSettings>::compute_u_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
