@@ -1,5 +1,7 @@
-#include "Shallow_waters.hpp"
 
+#include <filesystem>
+
+#include "Shallow_waters.hpp"
 #include "Case_Test.hpp"
 #include "Case_Examples.hpp"
 
@@ -12,6 +14,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    const std::string output_directory = "./vtk/";
+    std::filesystem::create_directories(output_directory);
+
     Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv);
 
     // Read command line arguments (T, deltat, mesh file name)
@@ -21,7 +26,7 @@ int main(int argc, char *argv[])
     const double deltat = std::stod(argv[2]);
     const std::string mesh_file_name = argv[3];
 
-    Shallow_waters<Problem_Case> problem(mesh_file_name, degree_velocity, degree_height, T, deltat);
+    Shallow_waters<Problem_Case> problem(mesh_file_name, degree_velocity, degree_height, T, deltat, output_directory);
 
     problem.setup();
     problem.solve();

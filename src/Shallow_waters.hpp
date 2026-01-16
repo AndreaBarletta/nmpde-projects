@@ -44,7 +44,6 @@ public:
 
     // Physical dimension (2D)
     static constexpr unsigned int dim = 2;
-    
 
     // Constructor. We provide the final time and time step Delta t
     // parameter as constructor arguments.
@@ -53,7 +52,8 @@ public:
         const unsigned int &degree_velocity_,
         const unsigned int &degree_height_,
         const double &T_,
-        const double &deltat_)
+        const double &deltat_,
+        const std::string &output_directory_ = "./vtk/")
         : mpi_size(Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)),
           mpi_rank(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)),
           pcout(std::cout, mpi_rank == 0),
@@ -62,7 +62,8 @@ public:
           degree_velocity(degree_velocity_),
           degree_height(degree_height_),   
           deltat(deltat_),
-          mesh(MPI_COMM_WORLD)
+          mesh(MPI_COMM_WORLD),
+          output_directory(output_directory_)
     {}
 
     // Initialization.
@@ -187,6 +188,10 @@ protected:
     // Previous time step solutions (used to compute u* or forcing term for velocity system).
     TrilinosWrappers::MPI::Vector previous_solution_h;
     TrilinosWrappers::MPI::Vector previous_solution_u;
+
+    // Output ////////////////////////////////////////////////////////////////////
+
+    const std::string output_directory;
 };
 
 #include "Shallow_waters_impl.hpp"
