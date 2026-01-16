@@ -188,7 +188,7 @@ void Shallow_waters<Case>::assemble_lhs_rhs_h(const double &time)
             double f_new_loc = 0.0;
             double f_old_loc = 0.0;
             if constexpr (P_C::ENABLE_FORCING_H) {
-                auto forcing_h = p_case.t_settings.forcing_term_h;
+                auto forcing_h = p_case.forcing_term_h;
 
                 forcing_h.set_time(time);
                 f_new_loc = forcing_h.value(fe_values_h.quadrature_point(q));
@@ -272,9 +272,9 @@ void Shallow_waters<Case>::assemble_lhs_rhs_h(const double &time)
            std::map<types::global_dof_index, double> boundary_values;
            std::map<types::boundary_id, const Function<dim> *> boundary_functions;
    
-           p_case.exact_solution_h.set_time(time);
+           p_case.exact_init_h.set_time(time);
            for (unsigned int i = 0; i < 4; ++i)
-               boundary_functions[i] = &p_case.exact_solution_h;
+               boundary_functions[i] = &p_case.exact_init_h;
    
            VectorTools::interpolate_boundary_values(dof_handler_h,
                                                     boundary_functions,
@@ -555,8 +555,8 @@ void Shallow_waters<Case>::solve()
 
         if constexpr (P_C::ENABLE_COMPUTE_EXACT_H) { // Set exact H on conv test for ONLY U
             previous_solution_h = solution_h;
-            p_case.exact_solution_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, p_case.exact_solution_h, solution_owned_h);
+            p_case.exact_init_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, p_case.exact_init_h, solution_owned_h);
             solution_h = solution_owned_h;
         } else {
             // Solve for h.
@@ -570,8 +570,8 @@ void Shallow_waters<Case>::solve()
 
         if constexpr (P_C::ENABLE_COMPUTE_EXACT_U) { // Set exact U on conv test for ONLY H
             previous_solution_u = solution_u;
-            p_case.exact_solution_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, p_case.exact_solution_u, solution_owned_u);
+            p_case.exact_init_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, p_case.exact_init_u, solution_owned_u);
             solution_u = solution_owned_u;
         } else {
             // // Solve for u.
@@ -616,12 +616,12 @@ double Shallow_waters<Case>::compute_h_error(const VectorTools::NormType &norm_t
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
 
-    p_case.t_settings.exact_solution_h.set_time(time);
+    p_case.exact_init_h.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_h,
                                         solution_h,
-                                        p_case.t_settings.exact_solution_h,
+                                        p_case.exact_init_h,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);
@@ -636,12 +636,12 @@ double Shallow_waters<Case>::compute_u_error(const VectorTools::NormType &norm_t
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
 
-    p_case.t_settings.exact_solution_u.set_time(time);
+    p_case.exact_init_u.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_u,
                                         solution_u,
-                                        p_case.t_settings.exact_solution_u,
+                                        p_case.exact_init_u,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);
