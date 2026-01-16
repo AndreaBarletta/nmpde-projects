@@ -188,11 +188,13 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
             double f_new_loc = 0.0;
             double f_old_loc = 0.0;
             if constexpr (Switches::ENABLE_FORCING_H) {
-                forcing_term_h.set_time(time);
-                f_new_loc = forcing_term_h.value(fe_values_h.quadrature_point(q));
+                auto forcing_h = problem_specs.forcing_term_h;
 
-                forcing_term_h.set_time(time - deltat);
-                f_old_loc = forcing_term_h.value(fe_values_h.quadrature_point(q));
+                forcing_h.set_time(time);
+                f_new_loc = forcing_h.value(fe_values_h.quadrature_point(q));
+
+                forcing_h.set_time(time - deltat);
+                f_old_loc = forcing_h.value(fe_values_h.quadrature_point(q));
             }
 
             // Compute SUPG parameter
@@ -270,9 +272,9 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
            std::map<types::global_dof_index, double> boundary_values;
            std::map<types::boundary_id, const Function<dim> *> boundary_functions;
    
-           exact_solution_h.set_time(time);
+           problem_specs.exact_solution_h.set_time(time);
            for (unsigned int i = 0; i < 4; ++i)
-               boundary_functions[i] = &exact_solution_h;
+               boundary_functions[i] = &problem_specs.exact_solution_h;
    
            VectorTools::interpolate_boundary_values(dof_handler_h,
                                                     boundary_functions,
@@ -359,13 +361,15 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
             Tensor<1, dim> f_new_loc_tensor;
             Tensor<1, dim> f_old_loc_tensor;
             if constexpr (Switches::ENABLE_FORCING_U) {
-                forcing_term_u.set_time(time);
-                Vector<double> f_new_loc(dim);
-                    forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_new_loc);
+                auto forcing_u = problem_specs.forcing_term_u;
 
-                forcing_term_u.set_time(time - deltat);
+                forcing_u.set_time(time);
+                Vector<double> f_new_loc(dim);
+                    forcing_u.vector_value(fe_values_u.quadrature_point(q), f_new_loc);
+
+                forcing_u.set_time(time - deltat);
                 Vector<double> f_old_loc(dim);
-                forcing_term_u.vector_value(fe_values_u.quadrature_point(q), f_old_loc);
+                forcing_u.vector_value(fe_values_u.quadrature_point(q), f_old_loc);
 
                 // Convert to Tensor for easier computation
                 for (unsigned int d = 0; d < dim; ++d)
@@ -386,7 +390,6 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
                 {
                      // phi_j terms
                     Tensor<1, dim> phi_j = fe_values_u[displacement].value(j, q);
-                    Tensor<2, dim> grad_phi_j = fe_values_u[displacement].gradient(j,q);
 
                     // Mass term
                     cell_mass_matrix(i, j) += phi_i * phi_j / deltat * fe_values_u.JxW(q);
@@ -505,34 +508,35 @@ void Shallow_waters::solve()
         pcout << "Applying the initial condition" << std::endl;
 
         if constexpr (Switches::ENABLE_EXACT_INIT_H) {
-            exact_solution_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            auto exact_h = problem_specs.exact_solution_h;
+
+            exact_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, exact_h, solution_owned_h);
             previous_solution_h = solution_owned_h;
-            exact_solution_h.set_time(time+deltat);
-            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            exact_h.set_time(time+deltat);
+            VectorTools::interpolate(dof_handler_h, exact_h, solution_owned_h);
         } else {
-            initial_conditions_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, initial_conditions_h, solution_owned_h);
+            problem_specs.initial_conditions_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, problem_specs.initial_conditions_h, solution_owned_h);
         }
         solution_h = solution_owned_h;
 
         if constexpr (Switches::ENABLE_EXACT_INIT_U) {
-            exact_solution_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            auto exact_u = problem_specs.exact_solution_u;
+            
+            exact_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, exact_u, solution_owned_u);
             previous_solution_u = solution_owned_u;
-            exact_solution_u.set_time(time+deltat);
-            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            exact_u.set_time(time+deltat);
+            VectorTools::interpolate(dof_handler_u, exact_u, solution_owned_u);
         } else {
-            initial_conditions_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, initial_conditions_u, solution_owned_u);
+            problem_specs.initial_conditions_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, problem_specs.initial_conditions_u, solution_owned_u);
         }
         solution_u = solution_owned_u;
 
         // Output the initial solution.
         output(0);
-
-        // previous_solution_h = solution_h;
-        // previous_solution_u = solution_u;
     }
 
     unsigned int time_step = 0.0;
@@ -552,8 +556,8 @@ void Shallow_waters::solve()
 
         if constexpr (Switches::ENABLE_EXACT_H) { // Set exact H on conv test for ONLY U
             previous_solution_h = solution_h;
-            exact_solution_h.set_time(time);
-            VectorTools::interpolate(dof_handler_h, exact_solution_h, solution_owned_h);
+            problem_specs.exact_solution_h.set_time(time);
+            VectorTools::interpolate(dof_handler_h, problem_specs.exact_solution_h, solution_owned_h);
             solution_h = solution_owned_h;
         } else {
             // Solve for h.
@@ -567,8 +571,8 @@ void Shallow_waters::solve()
 
         if constexpr (Switches::ENABLE_EXACT_U) { // Set exact U on conv test for ONLY H
             previous_solution_u = solution_u;
-            exact_solution_u.set_time(time);
-            VectorTools::interpolate(dof_handler_u, exact_solution_u, solution_owned_u);
+            problem_specs.exact_solution_u.set_time(time);
+            VectorTools::interpolate(dof_handler_u, problem_specs.exact_solution_u, solution_owned_u);
             solution_u = solution_owned_u;
         } else {
             // // Solve for u.
@@ -612,12 +616,12 @@ double Shallow_waters::compute_h_error(const VectorTools::NormType &norm_type)
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_height + 2);
 
-    exact_solution_h.set_time(time);
+    problem_specs.exact_solution_h.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_h,
                                         solution_h,
-                                        exact_solution_h,
+                                        problem_specs.exact_solution_h,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);
@@ -631,12 +635,12 @@ double Shallow_waters::compute_u_error(const VectorTools::NormType &norm_type)
 
     const QGaussSimplex<dim> quadrature_error = QGaussSimplex<dim>(degree_velocity + 2);
 
-    exact_solution_u.set_time(time);
+    problem_specs.exact_solution_u.set_time(time);
     Vector<double> error_per_cell;
     VectorTools::integrate_difference(mapping,
                                         dof_handler_u,
                                         solution_u,
-                                        exact_solution_u,
+                                        problem_specs.exact_solution_u,
                                         error_per_cell,
                                         quadrature_error,
                                         norm_type);

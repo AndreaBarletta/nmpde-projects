@@ -32,6 +32,8 @@
 #include <iostream>
 #include <chrono>
 
+#include "Problem_Specs.hpp"
+
 using namespace dealii;
 
 // Class representing the shallow waters problem.
@@ -242,17 +244,7 @@ protected:
     // Chézy’s friction coefficient
     static constexpr const double cf = 1e-2;
 
-    // Initial conditions
-    InitialConditions_h initial_conditions_h;
-    InitialConditions_u initial_conditions_u;
-
-    // Exact solutions
-    ExactSolution_h exact_solution_h;
-    ExactSolution_u exact_solution_u;
-
-    // Forcing term
-    ForcingTerm_h forcing_term_h;
-    ForcingTerm_u forcing_term_u;
+    Problem_Specs<dim> problem_specs;
 
     // Discretization. ///////////////////////////////////////////////////////////
 
