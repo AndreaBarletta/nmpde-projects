@@ -1,5 +1,7 @@
 #include "Shallow_waters.hpp"
-#include "Problem_Case.hpp"
+
+#include "Case_Test.hpp"
+#include "Case_Examples.hpp"
 
 // Main function.
 int main(int argc, char *argv[])

@@ -16,7 +16,7 @@ struct Problem_Case
     Value_Function<dim> exact_init_h;
     Vector_Function<dim> exact_init_u;
 
-    // ----- Test Settings
+    // ----- Test Settings --- [DEFAULT TEST DISABLED]
     // Output computation error
     static constexpr bool ENABLE_OUT_ERR_H = false;
     static constexpr bool ENABLE_OUT_ERR_U = false;
@@ -31,7 +31,5 @@ struct Problem_Case
     Value_Function<dim> forcing_term_h;
     Vector_Function<dim> forcing_term_u;
 };
-
-
 
 #endif // PROBLEM_CASE_HPP

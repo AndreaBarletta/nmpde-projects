@@ -1,0 +1,81 @@
+#ifndef CASE_EXAMPLES_HPP
+#define CASE_EXAMPLES_HPP
+
+#include "Problem_Case.hpp"
+
+template<unsigned int dim>
+struct Centered_Gaussian_Bump_Case : public Problem_Case<dim>
+{
+    class Centered_Gaussian_Bump_F : public Value_Function<dim>
+    {
+        public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 0.5 + 0.2 * std::exp(-((p[0] - 0.5) * (p[0] - 0.5) + (p[1] - 0.5) * (p[1] - 0.5)) * 500.0);
+        }
+    };
+
+    Value_Function<dim> exact_init_h = Centered_Gaussian_Bump_F();
+};
+
+template<unsigned int dim>
+struct Offset_Gaussian_Bump_Case : public Problem_Case<dim>
+{
+    class Offset_Gaussian_Bump_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 0.5 + 0.2 * std::exp(-((p[0] - 0.25) * (p[0] - 0.25) + (p[1] - 0.25) * (p[1] - 0.25)) * 500.0);
+        }
+    };
+
+    Value_Function<dim> exact_init_h = Offset_Gaussian_Bump_F();
+};
+
+template<unsigned int dim>
+struct Sloping_Plane_Case : public Problem_Case<dim>
+{
+    class Sloping_Plane_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 1.0 - 0.3 * p[0];
+        }   
+    };
+  
+    Value_Function<dim> exact_init_h = Sloping_Plane_F();
+};
+
+template<unsigned int dim>
+struct Disappearing_Dam_Break_Case : public Problem_Case<dim>
+{
+    class Disappearing_Dam_Break_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return p[0] < 0.5 ? 1.0 : 0.5;
+        }   
+    };
+  
+    Value_Function<dim> exact_init_h = Disappearing_Dam_Break_F();
+};
+
+template<unsigned int dim>
+struct Still_Water_Case : public Problem_Case<dim>
+{
+    class Still_Water_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 1.0;
+        }   
+    };
+
+    Value_Function<dim> exact_init_h = Still_Water_F();
+};
+
+#endif // CASE_EXAMPLES_HPP
