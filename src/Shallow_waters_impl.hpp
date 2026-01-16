@@ -1,9 +1,13 @@
+#ifndef SHALLOW_WATERS_IMPL_HPP
+#define SHALLOW_WATERS_IMPL_HPP
+
 #include "Shallow_waters.hpp"
 #include "Test_Switches.hpp"
 
 using Switches = Test_Convergence_H;
 
-void Shallow_waters::setup()
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::setup()
 {
     pcout << "===============================================" << std::endl;
 
@@ -112,7 +116,8 @@ void Shallow_waters::setup()
     }
 }
 
-void Shallow_waters::assemble_lhs_rhs_h(const double &time)
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::assemble_lhs_rhs_h(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the height system" << std::endl;
@@ -286,7 +291,8 @@ void Shallow_waters::assemble_lhs_rhs_h(const double &time)
     }
 }
 
-void Shallow_waters::assemble_lhs_rhs_u(const double &time)
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::assemble_lhs_rhs_u(const double &time)
 {
     pcout << "-----------------------------------------------" << std::endl;
     pcout << "Assembling the lhs and rhs for the velocity system" << std::endl;
@@ -451,11 +457,11 @@ void Shallow_waters::assemble_lhs_rhs_u(const double &time)
     }
 }
 
-void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
                                      TrilinosWrappers::MPI::Vector &system_rhs,
                                      TrilinosWrappers::MPI::Vector &solution_owned,
-                                     TrilinosWrappers::MPI::Vector &solution
-)
+                                     TrilinosWrappers::MPI::Vector &solution)
 {
     pcout << "-----------------------------------------------" << std::endl;
 
@@ -475,7 +481,8 @@ void Shallow_waters::solve_time_step(TrilinosWrappers::SparseMatrix &lhs_matrix,
     solution = solution_owned;
 }
 
-void Shallow_waters::output(const unsigned int &time_step) const
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::output(const unsigned int &time_step) const
 {
     DataOut<dim> data_out;
 
@@ -498,7 +505,8 @@ void Shallow_waters::output(const unsigned int &time_step) const
         "./vtk/", "output", time_step, MPI_COMM_WORLD, 3);
 }
 
-void Shallow_waters::solve()
+template<template<unsigned int> class Specs>
+void Shallow_waters<Specs>::solve()
 {
     pcout << "===============================================" << std::endl;
     time = 0.0;
@@ -609,7 +617,8 @@ void Shallow_waters::solve()
     }
 }
 
-double Shallow_waters::compute_h_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int> class Specs>
+double Shallow_waters<Specs>::compute_h_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
@@ -628,7 +637,8 @@ double Shallow_waters::compute_h_error(const VectorTools::NormType &norm_type)
     return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
 }
 
-double Shallow_waters::compute_u_error(const VectorTools::NormType &norm_type)
+template<template<unsigned int> class Specs>
+double Shallow_waters<Specs>::compute_u_error(const VectorTools::NormType &norm_type)
 {
     FE_SimplexP<dim> fe_linear(1);
     MappingFE        mapping(fe_linear);
@@ -646,3 +656,5 @@ double Shallow_waters::compute_u_error(const VectorTools::NormType &norm_type)
                                         norm_type);
     return VectorTools::compute_global_error(mesh, error_per_cell, norm_type);
 }
+
+#endif // SHALLOW_WATERS_IMPL_HPP

@@ -37,6 +37,7 @@
 using namespace dealii;
 
 // Class representing the shallow waters problem.
+template<template<unsigned int> class Specs>
 class Shallow_waters
 {
 public:
@@ -244,7 +245,7 @@ protected:
     // Chézy’s friction coefficient
     static constexpr const double cf = 1e-2;
 
-    Problem_Specs<dim> problem_specs;
+    Specs<dim> problem_specs;
 
     // Discretization. ///////////////////////////////////////////////////////////
 
@@ -316,5 +317,7 @@ protected:
     TrilinosWrappers::MPI::Vector previous_solution_h;
     TrilinosWrappers::MPI::Vector previous_solution_u;
 };
+
+#include "Shallow_waters_impl.hpp"
 
 #endif

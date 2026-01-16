@@ -3,5 +3,5 @@ project(shallow_waters LANGUAGES CXX C)
 
 include(cmake-common.cmake)
 
-add_executable(shallow_waters src/Shallow_waters.cpp src/main.cpp)
+add_executable(shallow_waters src/main.cpp)
 deal_ii_setup_target(shallow_waters)
