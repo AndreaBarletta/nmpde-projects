@@ -102,6 +102,6 @@ The repository includes a geometry definition file mesh/mesh_script.geo that can
 
 Below is an example of simulation result.
 
-### Gaussian bump
+### Gaussian offset bump
 
 ![Free surface](gifs/gauss_bump.gif)
