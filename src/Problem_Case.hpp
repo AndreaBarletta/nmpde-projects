@@ -2,6 +2,7 @@
 #define PROBLEM_CASE_HPP
 
 #include "Functions.hpp"
+#include <memory>
 
 template <unsigned int dim>
 struct Problem_Case
@@ -13,8 +14,8 @@ struct Problem_Case
     static constexpr const double cf = 1e-2;
 
     // Initial-exact solutions
-    Value_Function<dim> exact_init_h;
-    Vector_Function<dim> exact_init_u;
+    std::unique_ptr<Value_Function<dim>> exact_init_h;
+    std::unique_ptr<Vector_Function<dim>> exact_init_u;
 
     // ----- Test Settings --- [DEFAULT TEST DISABLED]
     // Output computation error
@@ -28,8 +29,15 @@ struct Problem_Case
     // Forcing term
     static constexpr bool ENABLE_FORCING_H = false;
     static constexpr bool ENABLE_FORCING_U = false;
-    Value_Function<dim> forcing_term_h;
-    Vector_Function<dim> forcing_term_u;
+    std::unique_ptr<Value_Function<dim>> forcing_term_h;
+    std::unique_ptr<Vector_Function<dim>> forcing_term_u;
+
+    Problem_Case()
+        : exact_init_h(std::make_unique<Value_Function<dim>>()),
+          exact_init_u(std::make_unique<Vector_Function<dim>>()),
+          forcing_term_h(std::make_unique<Value_Function<dim>>()),
+          forcing_term_u(std::make_unique<Vector_Function<dim>>())
+    {}
 };
 
 #endif // PROBLEM_CASE_HPP

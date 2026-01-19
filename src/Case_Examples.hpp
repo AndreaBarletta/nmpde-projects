@@ -15,7 +15,10 @@ struct Centered_Gaussian_Bump_Case : public Problem_Case<dim>
         }
     };
 
-    Value_Function<dim> exact_init_h = Centered_Gaussian_Bump_F();
+    Centered_Gaussian_Bump_Case()
+    {
+        this->exact_init_h = std::make_unique<Centered_Gaussian_Bump_F>();
+    }
 };
 
 template<unsigned int dim>
@@ -30,7 +33,10 @@ struct Offset_Gaussian_Bump_Case : public Problem_Case<dim>
         }
     };
 
-    Value_Function<dim> exact_init_h = Offset_Gaussian_Bump_F();
+    Offset_Gaussian_Bump_Case()
+    {
+        this->exact_init_h = std::make_unique<Offset_Gaussian_Bump_F>();
+    }
 };
 
 template<unsigned int dim>
@@ -45,7 +51,10 @@ struct Sloping_Plane_Case : public Problem_Case<dim>
         }   
     };
   
-    Value_Function<dim> exact_init_h = Sloping_Plane_F();
+    Sloping_Plane_Case()
+    {
+        this->exact_init_h = std::make_unique<Sloping_Plane_F>();
+    }
 };
 
 template<unsigned int dim>
@@ -57,10 +66,13 @@ struct Disappearing_Dam_Break_Case : public Problem_Case<dim>
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             return p[0] < 0.5 ? 1.0 : 0.5;
-        }   
+        }
     };
   
-    Value_Function<dim> exact_init_h = Disappearing_Dam_Break_F();
+    Disappearing_Dam_Break_Case()
+    {
+        this->exact_init_h = std::make_unique<Disappearing_Dam_Break_F>();
+    }
 };
 
 template<unsigned int dim>
@@ -72,10 +84,13 @@ struct Still_Water_Case : public Problem_Case<dim>
         virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
         {
             return 1.0;
-        }   
+        }
     };
 
-    Value_Function<dim> exact_init_h = Still_Water_F();
+    Still_Water_Case()
+    {
+        this->exact_init_h = std::make_unique<Still_Water_F>();
+    }
 };
 
 #endif // CASE_EXAMPLES_HPP

@@ -94,10 +94,13 @@ struct Manufactured_Test_Case : public Problem_Case<dim>{
         }
     };
 
-    Value_Function<dim> exact_init_h = Exact_h();
-    Vector_Function<dim> exact_init_u = Exact_u();
-    Value_Function<dim> forcing_term_h = ForcingTerm_h();
-    Vector_Function<dim> forcing_term_u = ForcingTerm_u();
+    Manufactured_Test_Case()
+    {
+        this->exact_init_h = std::make_unique<Exact_h>();
+        this->exact_init_u = std::make_unique<Exact_u>();
+        this->forcing_term_h = std::make_unique<ForcingTerm_h>();
+        this->forcing_term_u = std::make_unique<ForcingTerm_u>();
+    }
 };
 
 // Don't compute anything
@@ -195,8 +198,11 @@ struct SUPG_Test : public Problem_Case<dim> {
     static constexpr bool ENABLE_OUT_ERR_H = false;
     static constexpr bool ENABLE_OUT_ERR_U = false;
 
-    Value_Function<dim> exact_init_h = Exact_H_F();
-    Vector_Function<dim> exact_init_u = Exact_U_F();
+    SUPG_Test()
+    {
+        this->exact_init_h = std::make_unique<Exact_H_F>();
+        this->exact_init_u = std::make_unique<Exact_U_F>();
+    }
 };
 
 
