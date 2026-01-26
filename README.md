@@ -29,9 +29,14 @@ oceanography, hydraulics, geophysics, and atmospheric sciences.
 ## Repository Structure
 
     .
-    ├── src/                 # C++ source code of the solver
-    ├── convergence.py      # Script for convergence plots
-    ├── manufacture.py      # Manufactured solution and error computation
+    ├── docs/               # Project documentation
+    ├── gifs/               # Showcase gifs
+    ├── mesh/               # Mesh files
+    ├── scripts/            # Scripts for:
+    │                           + Plot data
+    │                           + Generate manufactured solution
+    │                           + Run tests
+    ├── src/                # C++ source code of the solver
     ├── CMakeLists.txt      # Build configuration
     └── README.md
 
