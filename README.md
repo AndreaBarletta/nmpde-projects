@@ -6,6 +6,16 @@ finite element library.\
 The software is designed with a dual focus on **numerical robustness**
 and **parallel scalability**.
 
+This is part of a project-work for **Numerical Methods For Partial Differential Equations** course [@Polimi](https://www.polimi.it/)
+
+------------------------------------------------------------------------
+
+## Authors
+
+Project developed by:
+- [Andrea Barletta](https://github.com/AndreaBarletta)
+- [Enrico Tirri](https://github.com/EnricoTirri)
+
 ------------------------------------------------------------------------
 
 ## Overview
