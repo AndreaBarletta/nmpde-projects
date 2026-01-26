@@ -40,6 +40,44 @@ struct Offset_Gaussian_Bump_Case : public Problem_Case<dim>
 };
 
 template<unsigned int dim>
+struct Side_Wave_Case : public Problem_Case<dim>
+{
+    class Side_Wave_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            // make the wave a bit wider 
+            return 0.5 + 0.05 * std::exp(-((p[0] - 0.1) * (p[0] - 0.1)) * 500.0);
+        }
+    };
+
+    Side_Wave_Case()
+    {
+        this->exact_init_h = std::make_unique<Side_Wave_F>();
+    }
+};
+
+template<unsigned int dim>
+struct Angular_Side_Wave_Case : public Problem_Case<dim>
+{
+    class Angular_Side_Wave_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            // the wave has to form a L-shape in the corner
+            return 0.5 + 0.05 * std::max(std::exp(-((p[0] - 0.1) * (p[0] - 0.1)) * 500.0), std::exp(-((p[1] - 0.1) * (p[1] - 0.1)) * 500.0));
+        }
+    };
+
+    Angular_Side_Wave_Case()
+    {
+        this->exact_init_h = std::make_unique<Angular_Side_Wave_F>();
+    }
+};
+
+template<unsigned int dim>
 struct Sloping_Plane_Case : public Problem_Case<dim>
 {
     class Sloping_Plane_F : public Value_Function<dim>
@@ -56,6 +94,27 @@ struct Sloping_Plane_Case : public Problem_Case<dim>
         this->exact_init_h = std::make_unique<Sloping_Plane_F>();
     }
 };
+
+template<unsigned int dim>
+struct Corner_Gaussian_Drop_Case : public Problem_Case<dim>
+{
+    class Corner_Gaussian_Drop_F : public Value_Function<dim>
+    {
+    public:
+        virtual double value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
+        {
+            return 0.5 + 0.2 * std::exp(-((p[0]) * (p[0]) + (p[1]) * (p[1])) * 500.0);
+        }
+    };
+  
+    Corner_Gaussian_Drop_Case()
+    {
+        this->exact_init_h = std::make_unique<Corner_Gaussian_Drop_F>();
+    }
+};
+
+
+
 
 template<unsigned int dim>
 struct Disappearing_Dam_Break_Case : public Problem_Case<dim>
